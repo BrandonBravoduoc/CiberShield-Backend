@@ -33,10 +33,6 @@ public class Contact {
     private String phone;
 
     @ManyToOne
-    @JoinColumn(name = "id_user", nullable = true)
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "id_address", nullable = true)
     private Address address;
 
