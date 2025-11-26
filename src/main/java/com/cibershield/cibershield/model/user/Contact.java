@@ -36,4 +36,8 @@ public class Contact {
     @JoinColumn(name = "id_address", nullable = true)
     private Address address;
 
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = true)
+    private User user;
+
 }
