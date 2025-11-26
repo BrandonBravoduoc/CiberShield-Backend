@@ -27,7 +27,7 @@ public class User {
     private Long id;
 
     @Lob
-    @Column (name ="image_User", columnDefinition = "TEXT", nullable = true )
+    @Column (name ="image_user", columnDefinition = "TEXT", nullable = true )
     private String imageUser;
 
     @Column(name = "user_name",nullable = false, unique = true)
