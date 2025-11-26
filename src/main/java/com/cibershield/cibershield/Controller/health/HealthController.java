@@ -1,4 +1,4 @@
-package com.cibershield.cibershield.Controller.health;
+package com.cibershield.cibershield.controller.health;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
