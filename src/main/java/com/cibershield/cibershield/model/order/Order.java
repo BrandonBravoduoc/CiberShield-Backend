@@ -52,5 +52,5 @@ public class Order {
     private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderDetails> details = new ArrayList<>();
+    private List<OrderDetail> details = new ArrayList<>();
 }
