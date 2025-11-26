@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contacto")
+@Table(name = "Contact")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class Contact {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "Phone", nullable = false, unique = true)
+    @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 
     @ManyToOne
