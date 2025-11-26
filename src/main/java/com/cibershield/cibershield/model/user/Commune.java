@@ -34,7 +34,7 @@ public class Commune {
 
     @OneToMany(mappedBy = "street")
     @JsonIgnore
-    private List<Address> Address;
+    private List<Address> address;
 
     @ManyToOne
     @JoinColumn(name = "id_region")
