@@ -47,7 +47,7 @@ public class User {
     private Contact contact;
     
     @ManyToOne
-    @JoinColumn(name = "id_rol_user", nullable = true)
+    @JoinColumn(name = "id_role", nullable = true)
     private UserRole userRole;
 
 }

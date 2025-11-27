@@ -29,7 +29,7 @@ public class Commune {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name_community", nullable = false, unique = true)
+    @Column(name = "name_commune", nullable = false, unique = true)
     private String nameCommunity;
 
     @OneToMany(mappedBy = "street")
