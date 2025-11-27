@@ -22,11 +22,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    UserService(UserRoleRepository userRoleRepository) {
-        this.userRoleRepository = userRoleRepository;
-    }
-
-
     public User createUser(User user, String confirmPassword){
         if(user.getUserName() == null || user.getUserName().trim().isEmpty()){
             throw new RuntimeException("El nombre de usuario es obligatorio.");
@@ -39,6 +34,7 @@ public class UserService {
 
         UserRole userRole = userRoleRepository.findByRoleName("CLIENTE");
         user.setUserRole(userRole);
+
         return userRepository.save(user);
     }
 
@@ -48,18 +44,33 @@ public class UserService {
 
     public User findByEmail(String email){
         return userRepository.findByEmail(email)
-            .orElseThrow(()-> new RuntimeException("Correo no registrado"));
+            .orElseThrow(()-> new RuntimeException("Correo no registrado."));
     }
-
-
-
 
     public void delete(Long id){
         userRepository.findById(id)
-            .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(()-> new RuntimeException("Usuario no encontrado."));
         userRepository.deleteById(id);
     }
 
+    public User userUpdate(Long id, String newUserName, String newEmail, String newPassword, String confirmPassword){
+        User updateUser = userRepository.findById(id)
+            .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+
+        if(newUserName != null && !newUserName.isBlank()){
+            updateUser.setUserName(newUserName);
+        }
+        if(newEmail != null && !newEmail.isBlank()){
+            emailValidate(newEmail);
+            updateUser.setEmail(newEmail);
+        }
+        if(newPassword != null && !newPassword.isBlank()){
+            passwordValidate(newPassword, confirmPassword);
+            updateUser.setPassword(newPassword);
+        }
+
+        return userRepository.save(updateUser);
+    }
 
     public void emailValidate(String email){
         if(email == null || email.trim().isEmpty()){
