@@ -3,9 +3,13 @@ package com.cibershield.cibershield.repository.user;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.cibershield.cibershield.model.user.Commune;
+
+
+
 
 @Repository
-public interface Commune extends JpaRepository <Commune, Long>{
+public interface CommuneRepository extends JpaRepository <Commune, Long>{
 
     
 

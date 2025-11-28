@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.dto.userDto.UpdatePasswordDTO;
 import com.cibershield.cibershield.dto.userDto.UserRegisterDTO;
+import com.cibershield.cibershield.dto.userDto.UserResponseDTO;
+import com.cibershield.cibershield.dto.userDto.UserUpdateDTO;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.UserRepository;
@@ -68,26 +70,29 @@ public class UserService {
 
 
     @PreAuthorize("isAuthenticated()")
-    public User userUpdate(Long id, String newUserName, String newEmail, String newPassword, String confirmPassword){
-        User updateUser = userRepository.findById(id)
-            .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
-
-        if(newUserName != null && !newUserName.isBlank()){
-            if(userRepository.existsByUserName(newUserName.trim())){
+    public UserResponseDTO userUpdate(User currentUser, UserUpdateDTO dto){
+        if(dto.getNewUserName() != null && !dto.getNewUserName().isBlank()){
+            if(userRepository.existsByUserName(dto.getNewUserName().trim())){
                 throw new RuntimeException("El nombre de usuario no está disponible.");
             }
-            updateUser.setUserName(newUserName.trim());
+            currentUser.setUserName(dto.getNewUserName().trim());
         }
-        if(newEmail != null && !newEmail.isBlank()){
-            emailValidate(newEmail,id);
-            updateUser.setEmail(newEmail.trim().toLowerCase());
+        if(dto.getNewEmail() != null && !dto.getNewEmail().isBlank()){
+            emailValidate(dto.getNewEmail(),currentUser.getId());
+            currentUser.setEmail(dto.getNewEmail().trim().toLowerCase());
         }
-        if(newPassword != null && !newPassword.isBlank()){
-            passwordValidate(newPassword, confirmPassword);
-            updateUser.setPassword(passwordEncoder.encode(newPassword));
+        if(dto.getNewPassword() != null && !dto.getConfirmPassword().isBlank()){
+            passwordValidate(dto.getNewPassword(), dto.getConfirmPassword());
+            currentUser.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         }
 
-        return userRepository.save(updateUser);
+       User updateUser =  userRepository.save(currentUser);
+
+       return new UserResponseDTO(
+        updateUser.getId(),
+        updateUser.getUserName(), 
+        updateUser.getEmail(), 
+        updateUser.getUserRole().getRoleName());
     }
 
     public void changeMyPassword(UpdatePasswordDTO dto, Authentication auth) {
