@@ -13,7 +13,7 @@ import com.cibershield.cibershield.model.product.TradeMark;
 public interface TradeMarkRepository extends JpaRepository<TradeMark, Long> {
 
     @Query("SELECT m FROM TradeMark m WHERE LOWER(m.tradeMarkName) = LOWER(:tradeMarkName)")
-    Optional<TradeMark> findByBrandName(@Param("tradeMarkName") String tradeMarkName);
+    Optional<TradeMark> findByTradeMarkName(@Param("tradeMarkName") String tradeMarkName);
 
-    boolean existsByBrandName(String tradeMarkName);
+    boolean existsByTradeMarkName(String tradeMarkName);
 }
