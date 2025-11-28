@@ -51,7 +51,7 @@ public class OrderService {
         }
 
         if (dto.getItems() == null || dto.getItems().isEmpty()) {
-            throw new RuntimeException("Tu carrito está vacío");
+            throw new RuntimeException("Tu carrito está vacio");
         }
 
         User client = userRepository.findByEmail(auth.getName())
@@ -63,7 +63,7 @@ public class OrderService {
         order.setUser(client);
         order.setStatus(orderStatusService.getPendingStatus());
 
-        List<OrderDetail> detalles = new ArrayList<>();
+        List<OrderDetail> details = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
         for (OrderCreateItemDTO item : dto.getItems()) {
@@ -80,18 +80,18 @@ public class OrderService {
 
             ShippingMethod shipping = shippingMethodService.findById(item.getShippingMethodId());
 
-            OrderDetail detalle = orderDetailService.createOrderDetail(order, producto, item, shipping);
+            OrderDetail deteils2 = orderDetailService.createOrderDetail(order, producto, item, shipping);
 
-            detalles.add(detalle);
-            total = total.add(detalle.getSubtotal()).add(shipping.getShippingCost());
+            details.add(deteils2);
+            total = total.add(deteils2.getSubtotal()).add(shipping.getShippingCost());
         }
 
-        order.setDetails(detalles);
+        order.setDetails(details);
         order.setTotal(total);
 
-        Order guardada = orderRepository.save(order);
+        Order saveOrder = orderRepository.save(order);
 
-        return toResponseDTO(guardada, client);
+        return toResponseDTO(saveOrder, client);
     }
 
     private OrderResponseDTO toResponseDTO(Order o, User u) {
@@ -103,17 +103,17 @@ public class OrderService {
         r.setStatus(o.getStatus().getName());
         r.setUserName(u.getUserName());
 
-        List<OrderDetailResponseDTO> lista = new ArrayList<>();
+        List<OrderDetailResponseDTO> listaOrderDetail = new ArrayList<>();
         for (OrderDetail d : o.getDetails()) {
             OrderDetailResponseDTO odr = new OrderDetailResponseDTO();
             odr.setProductId(d.getProduct().getId());
             odr.setProductName(d.getProduct().getProductName());
-            odr.setQuantity(d.getAmount());
+            odr.setAmount(d.getAmount());
             odr.setUnitPrice(d.getUnitPrice());
             odr.setSubtotal(d.getSubtotal());
-            lista.add(odr);
+            listaOrderDetail.add(odr);
         }
-        r.setDetails(lista);
+        r.setDetails(listaOrderDetail);
         return r;
     }
 }

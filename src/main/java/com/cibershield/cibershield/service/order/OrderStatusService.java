@@ -15,6 +15,6 @@ public class OrderStatusService {
 
     public OrderStatus getPendingStatus() {
         return orderStatusRepository.findByName("PENDIENTE")
-                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE' no creado"));
+                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE' no ha sido creado"));
     }
 }
