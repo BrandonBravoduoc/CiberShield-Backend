@@ -1,15 +1,14 @@
 package com.cibershield.cibershield.controller.auth;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibershield.cibershield.dto.auth.AuthResponseDTO;
+import com.cibershield.cibershield.dto.userDto.LoginDTO;
+import com.cibershield.cibershield.dto.userDto.UserRegisterDTO;
+import com.cibershield.cibershield.dto.userDto.UserResponseDTO;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.service.jwt.JwtService;
@@ -23,45 +22,46 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private  UserService userService;
-
-    @Autowired
-    private  JwtService jwtService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody User user, @RequestParam String confirmPassword) {
-        User creado = userService.createUser(user, confirmPassword);
-        String token = jwtService.generateToken(creado);
+    public AuthResponseDTO register(@RequestBody UserRegisterDTO dto) {
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("token", token);
-        res.put("user", creado);
-        return res;
+        User user = userService.createUser(dto);  // usa DTO
+        String token = jwtService.generateToken(user);
+
+        UserResponseDTO userRes = new UserResponseDTO(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getUserRole().getRoleName()
+        );
+
+        return new AuthResponseDTO(token, userRes);
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> creds) {
-        String email = creds.get("email");
-        String pass = creds.get("password");
+    public AuthResponseDTO login(@RequestBody LoginDTO dto) {
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
 
-        if (!passwordEncoder.matches(pass, user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Credenciales inválidas");
         }
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("token", jwtService.generateToken(user));
-        res.put("user", user);
-        return res;
-    }
+        String token = jwtService.generateToken(user);
 
+        UserResponseDTO userRes = new UserResponseDTO(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getUserRole().getRoleName()
+        );
+
+        return new AuthResponseDTO(token, userRes);
+    }
 }
