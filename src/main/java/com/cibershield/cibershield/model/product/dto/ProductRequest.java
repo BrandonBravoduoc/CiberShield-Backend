@@ -1,0 +1,5 @@
+package com.cibershield.cibershield.model.product.dto;
+
+public class ProductRequest {
+    
+}
