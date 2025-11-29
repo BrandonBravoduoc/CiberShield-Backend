@@ -24,13 +24,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/doc/swagger-ui.html/**").permitAll()
-                .requestMatchers("api/v1/products").permitAll()
-                .anyRequest().authenticated())
+                .requestMatchers("/api/auth/**").permitAll()           // login, register, etc.
+                .requestMatchers("/doc/**").permitAll()                // CORREGIDO: todo Swagger funciona perfecto
+                .anyRequest().authenticated()                          // todo lo demás necesita JWT
+            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
