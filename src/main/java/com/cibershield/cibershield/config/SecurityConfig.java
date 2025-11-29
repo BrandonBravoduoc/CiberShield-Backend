@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()     // login, register…
+                .requestMatchers("/api/v1/auth/**").permitAll()     // login, register…
                 .requestMatchers("/doc/**").permitAll()          // Swagger y OpenAPI 100 % público
                 .requestMatchers("/swagger-ui/**").permitAll()   // por si usas la ruta vieja
                 .requestMatchers("/v3/api-docs/**").permitAll()  // por si alguien entra directo
