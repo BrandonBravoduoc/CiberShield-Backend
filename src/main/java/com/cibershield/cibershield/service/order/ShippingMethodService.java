@@ -15,6 +15,6 @@ public class ShippingMethodService {
 
     public ShippingMethod findById(Long id) {
         return shippingMethodRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Metodo de envio no valido"));
+                .orElseThrow(() -> new RuntimeException("Método de envío no válido"));
     }
 }
