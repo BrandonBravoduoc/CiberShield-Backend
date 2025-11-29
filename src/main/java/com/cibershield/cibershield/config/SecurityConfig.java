@@ -22,14 +22,16 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
-    @Bean
+   @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()           // login, register, etc.
-                .requestMatchers("/doc/**").permitAll()                // CORREGIDO: todo Swagger funciona perfecto
-                .anyRequest().authenticated()                          // todo lo demás necesita JWT
+                .requestMatchers("/api/auth/**").permitAll()     // login, register…
+                .requestMatchers("/doc/**").permitAll()          // Swagger y OpenAPI 100 % público
+                .requestMatchers("/swagger-ui/**").permitAll()   // por si usas la ruta vieja
+                .requestMatchers("/v3/api-docs/**").permitAll()  // por si alguien entra directo
+                .anyRequest().authenticated()                    // el resto sigue protegido con JWT
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
