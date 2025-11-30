@@ -15,4 +15,6 @@ public interface CategoryRespository extends JpaRepository<Category, Long> {
     @Query("SELECT c FROM Category c WHERE LOWER(c.categoryName) = LOWER(:categoryName)")
     Optional<Category> findByCategoryName(@Param("categoryName") String categoryName);
 
+    boolean existsByCategoryName(String standardized);
+
 }
