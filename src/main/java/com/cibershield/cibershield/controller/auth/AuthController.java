@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,18 +99,18 @@ public class AuthController {
     @PostMapping("/singin")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new BadCredentialsException("Debe ingresar un correo.");
+            throw new RuntimeException("Debe ingresar un correo.");
         }
 
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new BadCredentialsException("Debe ingresar una contraseña.");
+            throw new RuntimeException("Debe ingresar una contraseña.");
         }
 
         User user = userRepository.findByEmail(dto.getEmail().trim().toLowerCase())
-            .orElseThrow(() -> new BadCredentialsException("El correo ingresado no existe."));
+            .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("La contraseña es incorrecta.");
+            throw new RuntimeException("La contraseña es incorrecta.");
         }
 
         String token = jwtService.generateToken(user);
