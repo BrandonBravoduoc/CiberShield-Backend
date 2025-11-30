@@ -97,7 +97,7 @@ public class AuthController {
     }
     
 
-    @PostMapping("/login")
+    @PostMapping("/singin")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
             throw new BadCredentialsException("Debe ingresar un correo.");
