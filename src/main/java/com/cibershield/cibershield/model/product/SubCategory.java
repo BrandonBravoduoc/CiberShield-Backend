@@ -27,11 +27,6 @@ public class SubCategory {
     private String subCategoryName;
 
     @ManyToOne
-    @JoinColumn(name = "id_product", nullable = false)
-    private Product product;
-
-    @ManyToOne
     @JoinColumn(name = "id_category", nullable = false)
     private Category category;
-
 }
