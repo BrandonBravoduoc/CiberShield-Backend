@@ -13,7 +13,6 @@ import com.cibershield.cibershield.repository.order.OrderRepository;
 import com.cibershield.cibershield.repository.product.ProductRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
@@ -44,23 +43,19 @@ public class OrderService {
     @Autowired
     private OrderDetailService orderDetailService;
 
-    public OrderResponseDTO createOrder(OrderCreateDTO dto, Authentication auth) {
+    public OrderResponseDTO createOrder(OrderCreateDTO dto, Long userId) {
 
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("Debes iniciar sesión para realizar un pedido");
-        }
+        User user = userRepository.findById(userId)
+            .orElseThrow(()-> new RuntimeException("Usuario no encontrado o no ha iniciado sesión."));
 
         if (dto.getItems() == null || dto.getItems().isEmpty()) {
             throw new RuntimeException("Tu carrito está vacio");
         }
 
-        User client = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         Order order = new Order();
         order.setOrderDate(LocalDate.now());
         order.setOrderNumber("ORD-" + String.format("%06d", orderRepository.count() + 1));
-        order.setUser(client);
+        order.setUser(user);
         order.setStatus(orderStatusService.getPendingStatus());
 
         List<OrderDetail> details = new ArrayList<>();
@@ -91,7 +86,7 @@ public class OrderService {
 
         Order saveOrder = orderRepository.save(order);
 
-        return toResponseDTO(saveOrder, client);
+        return toResponseDTO(saveOrder, user);
     }
 
     private OrderResponseDTO toResponseDTO(Order o, User u) {
