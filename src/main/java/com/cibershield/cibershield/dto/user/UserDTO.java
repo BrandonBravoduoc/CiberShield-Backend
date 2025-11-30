@@ -40,4 +40,14 @@ public class UserDTO {
         String confirmPassword
     ){} 
 
+
+    public record Profile(
+        String userName,
+        String email,
+        String name,
+        String lastName,
+        String Phone,
+        String adressInfo
+    ){}
+
 }

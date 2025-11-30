@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
+import com.cibershield.cibershield.model.user.Address;
+import com.cibershield.cibershield.model.user.Contact;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.model.user.UserRole;
+import com.cibershield.cibershield.repository.user.ContactRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
 import jakarta.transaction.Transactional;
@@ -28,6 +31,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ContactRepository contactRepository;
 
 
     public UserDTO.Response createUser(UserDTO.Register dto){
@@ -152,6 +158,35 @@ public class UserService {
         }
     }
 
+
+    public UserDTO.Profile myProfile(User currentUser) {
+
+        Contact contact = contactRepository.findByUser(currentUser)
+            .orElse(null);
+
+      
+        String addressInfo = null;
+        if (contact != null && contact.getAddress() != null) {
+            Address addr = contact.getAddress();
+            addressInfo = addr.getStreet() + " " + addr.getNumber() +
+                        ", " + addr.getCommune().getNameCommunity();
+        }
+        else{
+            if(contact == null){
+                addressInfo = "Sin información";
+            }
+        }
+
+        return new UserDTO.Profile(
+            currentUser.getUserName(),
+            currentUser.getEmail(),
+            contact != null ? contact.getName() : "Iompleta tu nombre",
+            contact != null ? contact.getLastName() : "Ingresa tu apellido",
+            contact != null ? contact.getPhone() : "Ingresa tu teléfono",
+             addressInfo 
+          
+        );
+    }
 
 
 
