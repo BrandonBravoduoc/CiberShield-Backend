@@ -28,13 +28,13 @@ public class Product {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @Column(name = "Stock", nullable = false)
+    @Column(name = "stock", nullable = false)
     private Integer Stock;
 
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "Image_url")
+    @Column(name = "image_url")
     private String url;
 
     @ManyToOne
