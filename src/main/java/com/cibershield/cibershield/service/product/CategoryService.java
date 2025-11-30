@@ -2,7 +2,6 @@ package com.cibershield.cibershield.service.product;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.model.product.Category;
@@ -35,7 +34,7 @@ public class CategoryService {
         return category;
     }
 
-    public Category saveCategory(Category category, Authentication authentication) {
+    public Category saveCategory(Category category) {
         if (category == null) {
             throw new RuntimeException("La categoría no puede estar nula");
         }

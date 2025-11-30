@@ -2,9 +2,7 @@ package com.cibershield.cibershield.service.user;
 
 import java.util.List;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -98,7 +96,6 @@ public class UserService {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
     public UserDTO.Response userUpdate(User currentUser, UpdateUser dto){
         if(dto.newUserName() != null && !dto.newUserName().isBlank()){
             if(userRepository.existsByUserName(dto.newUserName().trim())){
@@ -122,8 +119,9 @@ public class UserService {
         updateUser.getUserRole().getNameRole());
     }
 
-    public void changeMyPassword(UserDTO.ChangePassword dto, Authentication auth) {
-        User user = (User) auth.getPrincipal();
+    public void changeMyPassword(UserDTO.ChangePassword dto, Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(()-> new RuntimeException("Usuario no encontrado."));
         if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             throw new RuntimeException("La contraseña actual es incorrecta");
         }
