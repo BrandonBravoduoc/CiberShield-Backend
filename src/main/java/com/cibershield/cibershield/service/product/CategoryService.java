@@ -40,7 +40,6 @@ public class CategoryService {
         }
 
         String standardized = dto.categoryName().trim().toUpperCase();
-
         if (categoryRepository.existsByCategoryName(standardized)) {
             throw new RuntimeException("El nombre de la categoría ya existe");
         }
