@@ -71,14 +71,10 @@ public class AuthController {
                     return ResponseEntity.badRequest().body("Solo se permiten imágenes");
                 }
 
-                Map<?, ?> result = cloudinary.uploader().upload(
+               Map<?, ?> result = cloudinary.uploader().upload(
                     imageUser.getBytes(),
                     ObjectUtils.asMap(
-                            "folder", "cibershield/users",
-                            "transformation", ObjectUtils.asMap(
-                                "width", 400, "height", 400, "crop", "limit",
-                                "quality", "auto", "format", "auto"
-                            )
+                        "folder", "cibershield/users"
                     )
                 );
                 imageUrl = (String) result.get("secure_url");
