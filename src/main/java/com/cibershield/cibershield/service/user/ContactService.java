@@ -64,7 +64,7 @@ public class ContactService {
         if(phone == null || phone.trim().isBlank()){
             throw new RuntimeException("Debe ingresar un número de teléfono.");
         }
-        if(contactRepository.existByPhone(phone)){
+        if(contactRepository.existsByPhone(phone)){
             throw new RuntimeException("El número de teléfono ya está en uso.");
         }
         if(!phone.matches("\\d+")){
