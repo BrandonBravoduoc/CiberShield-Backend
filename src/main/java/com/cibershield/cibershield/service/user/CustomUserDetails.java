@@ -25,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
                 user.getId(),
                 user.getEmail(),  
                 user.getPassword(),
-                List.of((GrantedAuthority) () -> user.getUserRole().getRoleName())
+                List.of((GrantedAuthority) () -> user.getUserRole().getNameRole())
         );
     }
 

@@ -21,19 +21,19 @@ public class UserRoleService {
     
     public RoleDTO.Response createRole(RoleDTO.CreateRole dto){
 
-        String roleName = dto.roleName().trim().toUpperCase();
-        if(roleName == null || dto.roleName().isEmpty()){
+        String nameRole = dto.roleName().trim().toUpperCase();
+        if(nameRole == null || dto.roleName().isEmpty()){
             throw new RuntimeException("El nombre del rol es obligatorio.");
         }
-        if(userRoleRepository.existsByRoleName(roleName)){
+        if(userRoleRepository.existsByRoleName(nameRole)){
             throw new RuntimeException("El rol ya existe");
         }
         UserRole role = new UserRole();
-        role.setRoleName(roleName);
+        role.setNameRole(nameRole);
 
         role = userRoleRepository.save(role);
 
-        return new RoleDTO.Response(role.getId(), role.getRoleName());
+        return new RoleDTO.Response(role.getId(), role.getNameRole());
     }
 
     public void deleteRole(Long roleId){
@@ -44,7 +44,7 @@ public class UserRoleService {
         if(userRepository.existsByUserRole(roleId)){
             throw new RuntimeException("No se puede eliminar un rol en uso");
         }
-        if("ADMIN".equalsIgnoreCase(role.getRoleName()) || "CLIENTE".equalsIgnoreCase(role.getRoleName())){
+        if("ADMIN".equalsIgnoreCase(role.getNameRole()) || "CLIENTE".equalsIgnoreCase(role.getNameRole())){
             throw new RuntimeException("El rol no se puede eliminar.");
         }
         userRoleRepository.delete(role);

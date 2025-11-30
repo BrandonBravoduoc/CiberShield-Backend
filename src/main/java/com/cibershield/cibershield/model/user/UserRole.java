@@ -21,7 +21,7 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "role_name", nullable = false, unique = true)
-    private String roleName;
+    @Column(name = "name_role", nullable = false, unique = true)
+    private String nameRole;
     
 }

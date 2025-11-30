@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
     private void crearRolSiNoExiste(String roleName) {
         if (!userRoleRepository.existsByRoleName(roleName)) {
             UserRole role = new UserRole();
-            role.setRoleName(roleName);           // ← CORRECTO: coincide con tu entidad
+            role.setNameRole(roleName);           // ← CORRECTO: coincide con tu entidad
             userRoleRepository.save(role);
             System.out.println("Rol creado automáticamente: " + roleName);
         }

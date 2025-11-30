@@ -21,7 +21,7 @@ public class JwtService {
         return JWT.create()
                 .withSubject(user.getEmail()) // correo va como subject
                 .withClaim("userId", user.getId()) // claim de id
-                .withClaim("role", user.getUserRole().getRoleName()) // claim del rol
+                .withClaim("role", user.getUserRole().getNameRole()) // claim del rol
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION))
                 .sign(algorithm);
     }

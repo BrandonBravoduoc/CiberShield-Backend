@@ -63,7 +63,7 @@ public class UserService {
             user.getUserName(),
             user.getEmail(),
             user.getImageUser(),
-            userRole.getRoleName()
+            userRole.getNameRole()
         );
     }
 
@@ -74,7 +74,7 @@ public class UserService {
                 user.getUserName(),
                 user.getEmail(),
                 user.getImageUser(),
-                user.getUserRole().getRoleName()
+                user.getUserRole().getNameRole()
             ))
             .toList();
     }
@@ -87,7 +87,7 @@ public class UserService {
             user.getUserName(),
             user.getEmail(),
             user.getImageUser(),
-            user.getUserRole().getRoleName()
+            user.getUserRole().getNameRole()
         );
     }
 
@@ -119,7 +119,7 @@ public class UserService {
         updateUser.getUserName(), 
         updateUser.getEmail(), 
         updateUser.getImageUser(),
-        updateUser.getUserRole().getRoleName());
+        updateUser.getUserRole().getNameRole());
     }
 
     public void changeMyPassword(UserDTO.ChangePassword dto, Authentication auth) {

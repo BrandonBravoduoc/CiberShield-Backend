@@ -112,7 +112,7 @@ public class AuthController {
             user.getUserName(),
             user.getEmail(),
             user.getImageUser(),
-            user.getUserRole().getRoleName()
+            user.getUserRole().getNameRole()
         );
 
         AuthResponseDTO response = new AuthResponseDTO(token, userResponse);
