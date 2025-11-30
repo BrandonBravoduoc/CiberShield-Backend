@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.cibershield.cibershield.dto.productDTO.CategoryDTO;
 import com.cibershield.cibershield.model.product.Category;
 import com.cibershield.cibershield.repository.product.CategoryRespository;
 
@@ -35,20 +36,26 @@ public class CategoryService {
         return category;
     }
 
-    public Category saveCategory(Category category, Authentication authentication) {
-        if (category == null) {
+    public CategoryDTO.Response saveCategory(CategoryDTO.Create dto, Authentication authentication) {
+        if (dto == null) {
             throw new RuntimeException("La categoría no puede estar nula");
         }
-        if (category.getCategoryName() == null || category.getCategoryName().trim().isBlank()) {
+        if (dto.categoryName() == null || dto.categoryName().trim().isBlank()) {
             throw new RuntimeException("El nombre de la categoría no puede estar vacío.");
         }
-        String standardized = category.getCategoryName().trim().toLowerCase();
-        return categoryRespository.findByCategoryName(standardized).orElseGet(() -> {
-            Category newCategory = new Category();
-            newCategory.setCategoryName(category.getCategoryName().trim());
-            return categoryRespository.save(newCategory);
-        });
+        String standardized = dto.categoryName().trim().toUpperCase();
+        if (categoryRespository.existsByCategoryName(standardized)) {
+            throw new RuntimeException("El nombre de la categoria ya existe");
+        }
 
+        Category category = new Category(); 
+        category.setCategoryName(standardized);
+
+        category = categoryRespository.save(category);
+        return new CategoryDTO.Response(
+            category.getId(),
+            category.getCategoryName()
+        );
     }
 
     public void deleteCategory(Long id) {

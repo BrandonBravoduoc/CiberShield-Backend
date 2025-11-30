@@ -79,7 +79,4 @@ public class CommuneService {
         communeRepository.delete(commune);
     }
 
-
-
-
 }

@@ -1,6 +1,8 @@
+package com.cibershield.cibershield.dto.productDTO;
+  
 import jakarta.validation.constraints.NotBlank;
 
-public class CategoryResponseDTO {
+public class CategoryDTO {
 
     public record Create(   
         @NotBlank(message = "El nombre de la categoría es obligatorio")

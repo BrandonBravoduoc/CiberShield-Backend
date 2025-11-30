@@ -1,4 +1,4 @@
-
+package com.cibershield.cibershield.dto.productDTO;
 import java.math.BigDecimal;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
