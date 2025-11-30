@@ -12,11 +12,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.cibershield.cibershield.util.JwtFilter;
 
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Autowired
@@ -27,10 +25,15 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll()     // login, register…
-                .requestMatchers("/doc/**").permitAll()          // Swagger y OpenAPI 100 % público
-                .requestMatchers("/swagger-ui/**").permitAll()   // por si usas la ruta vieja
-                .requestMatchers("/v3/api-docs/**").permitAll()  // por si alguien entra directo
+
+                .requestMatchers("/api/v1/auth/**").permitAll() 
+
+                .requestMatchers("/doc/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-ui.html").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui-custom.html").permitAll() 
+              
                 .anyRequest().authenticated()                    // el resto sigue protegido con JWT
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -42,5 +45,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
 }

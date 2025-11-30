@@ -48,10 +48,12 @@ public class UserService {
 
         User user = new User();
         user.setUserName(dto.userName());
+        user.setImageUser(dto.imageUser());
         user.setEmail(dto.email());
         user.setPassword(passwordEncoder.encode(dto.password()));
 
-        UserRole userRole = userRoleRepository.findByRoleName("CLIENTE");
+        UserRole userRole = userRoleRepository.findByRoleName("CLIENTE")
+            .orElseThrow(()-> new RuntimeException("Rol no encontrado."));
         user.setUserRole(userRole);
 
         user = userRepository.save(user);
@@ -60,17 +62,33 @@ public class UserService {
             user.getId(),
             user.getUserName(),
             user.getEmail(),
+            user.getImageUser(),
             userRole.getRoleName()
         );
     }
 
-    public List<User> listUsers(){
-        return userRepository.findAll();
+    public List<UserDTO.Response> listUsers(){
+        return userRepository.findAll().stream()    
+            .map(user -> new UserDTO.Response(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getImageUser(),
+                user.getUserRole().getRoleName()
+            ))
+            .toList();
     }
 
-    public User findByEmail(String email){
-        return userRepository.findByEmail(email)
-            .orElseThrow(()-> new RuntimeException("Correo no registrado."));
+    public UserDTO.Response findByEmail(String email){
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        return new UserDTO.Response(
+            user.getId(),
+            user.getUserName(),
+            user.getEmail(),
+            user.getImageUser(),
+            user.getUserRole().getRoleName()
+        );
     }
 
     public void delete(Long id){
@@ -100,6 +118,7 @@ public class UserService {
         updateUser.getId(),
         updateUser.getUserName(), 
         updateUser.getEmail(), 
+        updateUser.getImageUser(),
         updateUser.getUserRole().getRoleName());
     }
 

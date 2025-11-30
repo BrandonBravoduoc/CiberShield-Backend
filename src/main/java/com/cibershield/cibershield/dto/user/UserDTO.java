@@ -1,5 +1,7 @@
 package com.cibershield.cibershield.dto.user;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -10,7 +12,7 @@ public class UserDTO {
 
         @NotBlank(message = "El nombre de usuario es obligatorio.")
         String userName,
-        
+        String imageUser,
         @Email(message = "Correo invalido.")
         String email,
 
@@ -19,11 +21,19 @@ public class UserDTO {
         String confirmPassword
     ){}
 
+    public record RegisterRequest(
+        String userName,
+        String email,
+        String password,
+        String confirmPassword,
+        MultipartFile imageUser
+    ) {}
 
     public record Response(
         Long id,
         String userName,
         String email,
+        String imageUser,
         String roleName
     ){}
 

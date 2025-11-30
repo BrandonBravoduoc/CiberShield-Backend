@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.dto.user.ContactDTO;
 import com.cibershield.cibershield.model.user.Address;
+import com.cibershield.cibershield.model.user.Commune;
 import com.cibershield.cibershield.model.user.Contact;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.repository.user.AddressRepository;
+import com.cibershield.cibershield.repository.user.CommuneRepository;
 import com.cibershield.cibershield.repository.user.ContactRepository;
 
 @Service
@@ -19,23 +21,33 @@ public class ContactService {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    private AddressService addressService;
 
-    public ContactDTO.Response contactCreate(ContactDTO.CreateContact dto, User currentUser) {
+    @Autowired
+    private CommuneRepository communeRepository;
+
+
+    public ContactDTO.Response contactCreateWithAddress(ContactDTO.CreateContactWithAddress dto, User currentUser) {
 
         contactValidate(dto.name(), dto.lastName(), dto.phone());
+        addressService.addressValidation(dto.street(), dto.number());
 
+        Commune commune = communeRepository.findById(dto.communeId())
+            .orElseThrow(()-> new RuntimeException("Comuna no encontrada"));
+
+        Address  address = new Address();
+        address.setStreet(dto.street());
+        address.setNumber(dto.number());
+        address.setCommune(commune);
+        address = addressRepository.save(address);
+        
         Contact contact = new Contact();
         contact.setName(dto.name().trim());
         contact.setLastName(dto.lastName().trim());
         contact.setPhone(dto.phone().trim());
         contact.setUser(currentUser);
-
-        if (dto.addressId() != null) {
-            Address address = addressRepository.findById(dto.addressId())
-                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
-            contact.setAddress(address);
-        }
-
+        contact.setAddress(address);
         contact = contactRepository.save(contact);
 
        String addressInfo = contact.getAddress() != null
