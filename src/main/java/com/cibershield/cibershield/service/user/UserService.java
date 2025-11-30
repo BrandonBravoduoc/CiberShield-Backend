@@ -200,7 +200,7 @@ public class UserService {
             contact != null ? contact.getName() : "Iompleta tu nombre",
             contact != null ? contact.getLastName() : "Ingresa tu apellido",
             contact != null ? contact.getPhone() : "Ingresa tu teléfono",
-             addressInfo 
+            addressInfo 
           
         );
     }

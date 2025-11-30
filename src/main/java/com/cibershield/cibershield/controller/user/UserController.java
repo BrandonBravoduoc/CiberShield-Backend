@@ -43,19 +43,19 @@ public class UserController {
 
 
    @GetMapping
-public ResponseEntity<Profile> myProfile(HttpServletRequest request) {
-    String token = request.getHeader("X-TOKEN");
-    if (token == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<Profile> myProfile(HttpServletRequest request) {
+        String token = request.getHeader("X-TOKEN");
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        if (!jwtService.isValid(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        Long userId = jwtService.getUserIdFromToken(token);
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return ResponseEntity.ok(userService.myProfile(currentUser));
     }
-    if (!jwtService.isValid(token)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    }
-    Long userId = jwtService.getUserIdFromToken(token);
-    User currentUser = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    return ResponseEntity.ok(userService.myProfile(currentUser));
-}
 
     
     @PostMapping("/contact")
