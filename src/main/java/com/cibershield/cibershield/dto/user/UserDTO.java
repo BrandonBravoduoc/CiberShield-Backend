@@ -34,7 +34,7 @@ public class UserDTO {
         String userName,
         String email,
         String imageUser,
-        String roleName
+        String nameRole
     ){}
 
 

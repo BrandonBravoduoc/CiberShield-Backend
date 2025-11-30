@@ -21,8 +21,8 @@ public class UserRoleService {
     
     public RoleDTO.Response createRole(RoleDTO.CreateRole dto){
 
-        String nameRole = dto.roleName().trim().toUpperCase();
-        if(nameRole == null || dto.roleName().isEmpty()){
+        String nameRole = dto.nameRole().trim().toUpperCase();
+        if(nameRole == null || dto.nameRole().isEmpty()){
             throw new RuntimeException("El nombre del rol es obligatorio.");
         }
         if(userRoleRepository.existsByNameRole(nameRole)){

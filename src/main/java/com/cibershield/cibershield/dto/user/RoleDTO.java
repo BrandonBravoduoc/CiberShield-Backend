@@ -3,13 +3,13 @@ package com.cibershield.cibershield.dto.user;
 public class RoleDTO {
     
     public record CreateRole(
-        String roleName
+        String nameRole
     ){}
 
     
     public record Response(
         Long id,
-        String roleName
+        String nameRole
     ){}
 
 }
