@@ -15,7 +15,7 @@ public interface UserRoleRepository extends JpaRepository <UserRole, Long>{
 
     boolean existsByNameRole(String nameRole);
 
-    int countByUserRoleNameRole(String nameRole);
+    
 
     
 }

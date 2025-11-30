@@ -25,7 +25,7 @@ public class UserRoleService {
         if(nameRole == null || dto.roleName().isEmpty()){
             throw new RuntimeException("El nombre del rol es obligatorio.");
         }
-        if(userRoleRepository.existsByRoleName(nameRole)){
+        if(userRoleRepository.existsByNameRole(nameRole)){
             throw new RuntimeException("El rol ya existe");
         }
         UserRole role = new UserRole();

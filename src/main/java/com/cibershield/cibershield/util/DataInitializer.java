@@ -27,7 +27,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearRolSiNoExiste(String roleName) {
-        if (!userRoleRepository.existsByRoleName(roleName)) {
+        if (!userRoleRepository.existsByNameRole(roleName)) {
             UserRole role = new UserRole();
             role.setNameRole(roleName);           // ← CORRECTO: coincide con tu entidad
             userRoleRepository.save(role);
@@ -36,8 +36,8 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearAdminSiNoExiste() {
-        if (userRoleRepository.countByUserRoleRoleName("ADMIN") == 0) {
-            UserRole roleAdmin = userRoleRepository.findByRoleName("ADMIN")
+        if (userRepository.countByUserRoleNameRole("ADMIN") == 0) {
+            UserRole roleAdmin = userRoleRepository.findByNameRole("ADMIN")
                 .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado después de crearlo"));
 
             User admin = new User();

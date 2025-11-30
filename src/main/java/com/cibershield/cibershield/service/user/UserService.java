@@ -52,7 +52,7 @@ public class UserService {
         user.setEmail(dto.email());
         user.setPassword(passwordEncoder.encode(dto.password()));
 
-        UserRole userRole = userRoleRepository.findByRoleName("CLIENTE")
+        UserRole userRole = userRoleRepository.findByNameRole("CLIENTE")
             .orElseThrow(()-> new RuntimeException("Rol no encontrado."));
         user.setUserRole(userRole);
 
