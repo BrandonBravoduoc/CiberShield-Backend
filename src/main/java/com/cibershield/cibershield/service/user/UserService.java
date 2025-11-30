@@ -41,7 +41,10 @@ public class UserService {
         if(userRepository.existsByUserName(dto.userName())){
             throw new RuntimeException("El nombre de usuario no está disponible.");
         } 
-        emailValidate(dto.email(),null);
+        userRepository.findByEmail(dto.email().trim().toLowerCase())
+            .orElseThrow(()-> new RuntimeException("El correo ya está en uso."));
+            
+        emailValidate(dto.email());
         passwordValidate(dto.password(),dto.confirmPassword());
 
         User user = new User();
@@ -103,8 +106,14 @@ public class UserService {
             }
             currentUser.setUserName(dto.newUserName().trim());
         }
+        
+        userRepository.findByEmail(dto.newEmail()).ifPresent(existingUser -> {
+            if (currentUser.getEmail() == null || !existingUser.getEmail().equals(currentUser.getEmail())) {
+                throw new RuntimeException("El correo ya está en uso.");
+            }
+        });
         if(dto.newEmail() != null && !dto.newEmail().isBlank()){
-            emailValidate(dto.newEmail(),currentUser.getId());
+            emailValidate(dto.newEmail());
             currentUser.setEmail(dto.newEmail().trim().toLowerCase());
         }
 
@@ -131,7 +140,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void emailValidate(String email, Long currentUserId) {
+    public void emailValidate(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new RuntimeException("El correo es obligatorio.");
         }
@@ -141,11 +150,6 @@ public class UserService {
             throw new RuntimeException("El formato del correo no es válido.");
         }
 
-        userRepository.findByEmail(normalizedEmail).ifPresent(existingUser -> {
-            if (currentUserId == null || !existingUser.getId().equals(currentUserId)) {
-                throw new RuntimeException("El correo ya está en uso.");
-            }
-        });
     }
 
     public void passwordValidate(String password, String confirmPassword){
