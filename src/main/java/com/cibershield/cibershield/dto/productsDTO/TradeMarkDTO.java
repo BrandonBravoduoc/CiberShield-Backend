@@ -1,4 +1,4 @@
-package com.cibershield.cibershield.dto.productDTO;
+package com.cibershield.cibershield.dto.productsDTO;
 import jakarta.validation.constraints.NotBlank;
 
 public class TradeMarkDTO {
