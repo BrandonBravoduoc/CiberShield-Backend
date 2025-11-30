@@ -9,6 +9,8 @@ import com.cibershield.cibershield.model.user.Contact;
 @Repository
 public interface ContactRepository extends JpaRepository <Contact , Long>{
 
+    boolean existByPhone(String phone);
+
     
 
     
