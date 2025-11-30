@@ -8,10 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.cibershield.cibershield.dto.userDto.UpdatePasswordDTO;
-import com.cibershield.cibershield.dto.userDto.UserRegisterDTO;
-import com.cibershield.cibershield.dto.userDto.UserResponseDTO;
-import com.cibershield.cibershield.dto.userDto.UserUpdateDTO;
+import com.cibershield.cibershield.dto.user.UserDTO;
+import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.UserRepository;
@@ -32,25 +30,32 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
 
-    public User createUser(UserRegisterDTO dto){
-        if(dto.getUserName() == null || dto.getUserName().trim().isEmpty()){
+    public UserDTO.Response createUser(UserDTO.Register dto){
+        if(dto.userName() == null || dto.userName().trim().isEmpty()){
             throw new RuntimeException("El nombre de usuario es obligatorio.");
         }
-        if(userRepository.existsByUserName(dto.getUserName())){
+        if(userRepository.existsByUserName(dto.userName())){
             throw new RuntimeException("El nombre de usuario no está disponible.");
         } 
-        emailValidate(dto.getEmail(),null);
-        passwordValidate(dto.getPassword(),dto.getConfirmPassword());
+        emailValidate(dto.email(),null);
+        passwordValidate(dto.password(),dto.confirmPassword());
 
         User user = new User();
-        user.setUserName(dto.getUserName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        user.setUserName(dto.userName());
+        user.setEmail(dto.email());
+        user.setPassword(passwordEncoder.encode(dto.password()));
 
         UserRole userRole = userRoleRepository.findByRoleName("CLIENTE");
         user.setUserRole(userRole);
-        return userRepository.save(user);
+
+        user = userRepository.save(user);
+
+        return new UserDTO.Response(
+            user.getId(),
+            user.getUserName(),
+            user.getEmail(),
+            userRole.getRoleName()
+        );
     }
 
     public List<User> listUsers(){
@@ -70,40 +75,36 @@ public class UserService {
 
 
     @PreAuthorize("isAuthenticated()")
-    public UserResponseDTO userUpdate(User currentUser, UserUpdateDTO dto){
-        if(dto.getNewUserName() != null && !dto.getNewUserName().isBlank()){
-            if(userRepository.existsByUserName(dto.getNewUserName().trim())){
+    public UserDTO.Response userUpdate(User currentUser, UpdateUser dto){
+        if(dto.newUserName() != null && !dto.newUserName().isBlank()){
+            if(userRepository.existsByUserName(dto.newUserName().trim())){
                 throw new RuntimeException("El nombre de usuario no está disponible.");
             }
-            currentUser.setUserName(dto.getNewUserName().trim());
+            currentUser.setUserName(dto.newUserName().trim());
         }
-        if(dto.getNewEmail() != null && !dto.getNewEmail().isBlank()){
-            emailValidate(dto.getNewEmail(),currentUser.getId());
-            currentUser.setEmail(dto.getNewEmail().trim().toLowerCase());
+        if(dto.newEmail() != null && !dto.newEmail().isBlank()){
+            emailValidate(dto.newEmail(),currentUser.getId());
+            currentUser.setEmail(dto.newEmail().trim().toLowerCase());
         }
-        if(dto.getNewPassword() != null && !dto.getConfirmPassword().isBlank()){
-            passwordValidate(dto.getNewPassword(), dto.getConfirmPassword());
-            currentUser.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        }
+
 
        User updateUser =  userRepository.save(currentUser);
 
-       return new UserResponseDTO(
+       return new UserDTO.Response(
         updateUser.getId(),
         updateUser.getUserName(), 
         updateUser.getEmail(), 
         updateUser.getUserRole().getRoleName());
     }
 
-    public void changeMyPassword(UpdatePasswordDTO dto, Authentication auth) {
-        User user = userRepository.findById(dto.getId())
-            .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
-        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+    public void changeMyPassword(UserDTO.ChangePassword dto, Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             throw new RuntimeException("La contraseña actual es incorrecta");
         }
 
-        passwordValidate(dto.getNewPassword(), dto.getConfirmPassword());
-        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        passwordValidate(dto.newPassword(), dto.confirmPassword());
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);
     }
 

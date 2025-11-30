@@ -1,6 +1,7 @@
 package com.cibershield.cibershield.dto.auth;
 
-import com.cibershield.cibershield.dto.userDto.UserResponseDTO;
+
+import com.cibershield.cibershield.dto.user.UserDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class AuthResponseDTO {
     private String token;
-    private UserResponseDTO user;
+    private UserDTO.Response user;
 }
 

@@ -1,4 +1,4 @@
-package com.cibershield.cibershield.dto.userDto;
+package com.cibershield.cibershield.dto.auth;
 
 import lombok.Data;
 

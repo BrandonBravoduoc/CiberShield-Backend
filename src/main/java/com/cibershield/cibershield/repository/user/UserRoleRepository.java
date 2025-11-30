@@ -9,7 +9,9 @@ import com.cibershield.cibershield.model.user.UserRole;
 @Repository
 public interface UserRoleRepository extends JpaRepository <UserRole, Long>{
 
-    UserRole findByRoleName(String string);
+    UserRole findByRoleName(String roleName);
+
+    boolean existsByRoleName(String rolName);
 
     
 

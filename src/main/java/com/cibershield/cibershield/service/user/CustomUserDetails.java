@@ -23,7 +23,7 @@ public class CustomUserDetails implements UserDetails {
     public static CustomUserDetails build(User user) {
         return new CustomUserDetails(
                 user.getId(),
-                user.getEmail(),  // o userName
+                user.getEmail(),  
                 user.getPassword(),
                 List.of((GrantedAuthority) () -> user.getUserRole().getRoleName())
         );
