@@ -36,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearAdminSiNoExiste() {
-        if (userRepository.countByUserRoleRoleName("ADMIN") == 0) {
+        if (userRoleRepository.countByUserRoleRoleName("ADMIN") == 0) {
             UserRole roleAdmin = userRoleRepository.findByRoleName("ADMIN")
                 .orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado después de crearlo"));
 
