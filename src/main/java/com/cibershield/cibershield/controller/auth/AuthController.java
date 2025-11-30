@@ -97,16 +97,25 @@ public class AuthController {
     }
     
 
-   @PostMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
+        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
+            throw new BadCredentialsException("Debe ingresar un correo.");
+        }
+
+        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
+            throw new BadCredentialsException("Debe ingresar una contraseña.");
+        }
 
         User user = userRepository.findByEmail(dto.getEmail().trim().toLowerCase())
-        .orElseThrow(() -> new BadCredentialsException("El correo ingresado no existe."));
+            .orElseThrow(() -> new BadCredentialsException("El correo ingresado no existe."));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("La contraseña es incorrecta.");
         }
+
         String token = jwtService.generateToken(user);
+
         UserDTO.Response userResponse = new UserDTO.Response(
             user.getId(),
             user.getUserName(),
