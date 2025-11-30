@@ -12,7 +12,6 @@ import com.cibershield.cibershield.model.user.Region;
 @Repository
 public interface RegionRepository extends JpaRepository <Region, Long>{
 
-    List<Region> findAllByOrderByNombreRegionAsc();
 
     Optional<Region> findByRegionName(String regionName);
 

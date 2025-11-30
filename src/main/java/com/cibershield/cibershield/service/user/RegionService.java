@@ -20,7 +20,7 @@ public class RegionService {
 
 
     public List<Region>findAllRegions(){
-        return regionRepository.findAllByOrderByNombreRegionAsc();
+        return regionRepository.findAllByOrderByRegionNameAsc();
     }
 
     public Region findById(Long regionId){
