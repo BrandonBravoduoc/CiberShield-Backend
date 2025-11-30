@@ -1,8 +1,4 @@
 package com.cibershield.cibershield.dto.productsDTO;
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 import java.math.BigDecimal;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
