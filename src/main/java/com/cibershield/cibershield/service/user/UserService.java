@@ -38,19 +38,21 @@ public class UserService {
         if(dto.userName() == null || dto.userName().trim().isEmpty()){
             throw new RuntimeException("El nombre de usuario es obligatorio.");
         }
+        String email = dto.email().trim().toLowerCase();
+
         if(userRepository.existsByUserName(dto.userName())){
             throw new RuntimeException("El nombre de usuario no está disponible.");
         } 
-        userRepository.findByEmail(dto.email().trim().toLowerCase())
+        userRepository.findByEmail(email)
             .orElseThrow(()-> new RuntimeException("El correo ya está en uso."));
             
-        emailValidate(dto.email());
+        emailValidate(email);
         passwordValidate(dto.password(),dto.confirmPassword());
 
         User user = new User();
         user.setUserName(dto.userName());
         user.setImageUser(dto.imageUser());
-        user.setEmail(dto.email());
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(dto.password()));
 
         UserRole userRole = userRoleRepository.findByNameRole("CLIENTE")
