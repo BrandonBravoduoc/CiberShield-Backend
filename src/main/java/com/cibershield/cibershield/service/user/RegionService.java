@@ -64,5 +64,16 @@ public class RegionService {
             
     }
 
+    public void delete(String regionName){
+        if(regionName == null){
+            throw new RuntimeException("No ha ingresado un nombre para eliminar.");
+        }
+        Region region = regionRepository.findByRegionName(regionName)
+            .orElseThrow(()->new RuntimeException("No se encontró la región."));
+        
+        regionRepository.delete(region);
+    }
+
+
 
 }
