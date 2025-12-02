@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -42,7 +43,7 @@ public class UserController {
     private UserRepository userRepository;
 
 
-   @GetMapping
+   @GetMapping("profile")
     public ResponseEntity<Profile> myProfile(HttpServletRequest request) {
         String token = request.getHeader("X-TOKEN");
         if (token == null) {
@@ -56,6 +57,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return ResponseEntity.ok(userService.myProfile(currentUser));
     }
+
 
     
     @PostMapping("/contact")

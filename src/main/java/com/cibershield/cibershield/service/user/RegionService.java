@@ -64,7 +64,7 @@ public class RegionService {
             
     }
 
-    public void delete(String regionName){
+    public void deleteRegion(String regionName){
         if(regionName == null){
             throw new RuntimeException("No ha ingresado un nombre para eliminar.");
         }

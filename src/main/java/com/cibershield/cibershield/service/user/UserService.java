@@ -15,6 +15,8 @@ import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.ContactRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
+import com.cibershield.cibershield.util.JwtUtil;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -32,6 +34,9 @@ public class UserService {
 
     @Autowired
     private ContactRepository contactRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
     public UserDTO.Response createUser(UserDTO.Register dto){
@@ -130,17 +135,22 @@ public class UserService {
         updateUser.getUserRole().getNameRole());
     }
 
-    public void changeMyPassword(UserDTO.ChangePassword dto, Long userId) {
+    public void changeMyPassword(UserDTO.ChangePassword dto) {
+        Long userId = jwtUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
-            .orElseThrow(()-> new RuntimeException("Usuario no encontrado."));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
             throw new RuntimeException("La contraseña actual es incorrecta");
         }
 
-        passwordValidate(dto.newPassword(), dto.confirmPassword());
+        if (!dto.newPassword().equals(dto.confirmPassword())) {
+            throw new RuntimeException("Las nuevas contraseñas no coinciden");
+        }
         user.setPassword(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);
     }
+
 
     public void emailValidate(String email) {
         if (email == null || email.trim().isEmpty()) {

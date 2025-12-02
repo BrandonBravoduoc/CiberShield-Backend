@@ -60,9 +60,9 @@ public class CommuneService {
         if(regionId == null){
             throw new RuntimeException("Debe seleccionar una región.");
         }
-        regionRepository.findById(regionId)
-            .orElseThrow(()-> new RuntimeException("Región no encontrada."));
-        
+        if(!regionRepository.existsById(regionId)){
+            throw new RuntimeException("Región no encontrada.");
+        }   
         return communeRepository.findByRegionIdOrderByNameCommunityAsc(regionId).stream()
             .map(c -> new CommuneDTO.Combo(c.getId(), c.getNameCommunity(), c.getRegion().getRegionName()))
             .toList();
