@@ -41,6 +41,13 @@ public class TradeMarkService {
         return mapToResponse(t);
     }
 
+    public void deleteTradeMark(Long id){
+        if (!tradeMarkRepository.existsById(id)) {
+            throw new RuntimeException("Marca comercial no encontrada");    
+        }
+        tradeMarkRepository.deleteById(id);
+    }
+
     private TradeMarkDTO.Response mapToResponse(TradeMark t) {
         return new TradeMarkDTO.Response(
                 t.getId(),

@@ -13,16 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.service.product.ProductService;
-import com.cloudinary.Cloudinary;
 
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
-    @Autowired
-    private ProductService productService;
 
     @Autowired
-    private Cloudinary cloudinary;
+    private ProductService productService;
 
     @GetMapping
     public ResponseEntity<List<ProductDTO.Response>> listAll() {
@@ -38,16 +35,14 @@ public class ProductController {
         }
     }
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             productService.deleteProduct(id);
-            return ResponseEntity.noContent().build(); 
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(e.getMessage());
         }
     }
-    
+
 }

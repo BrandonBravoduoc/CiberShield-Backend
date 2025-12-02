@@ -41,7 +41,7 @@ public class SubCategoryService {
         return mapToResponse(subCategory);
     }
 
-    public void delete(Long id) {
+    public void deleteSubCategory(Long id) {
         if (!subCategoryRepository.existsById(id)) {
             throw new RuntimeException("Subcategoría no encontrada.");
         }
