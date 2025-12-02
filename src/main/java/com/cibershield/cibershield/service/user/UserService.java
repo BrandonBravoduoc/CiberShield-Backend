@@ -105,35 +105,42 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public UserDTO.Response userUpdate(UpdateUser dto) {
 
-    public UserDTO.Response userUpdate(User currentUser, UpdateUser dto){
-        if(dto.newUserName() != null && !dto.newUserName().isBlank()){
-            if(userRepository.existsByUserName(dto.newUserName().trim())){
+        Long userId = jwtUtil.getCurrentUserId();
+
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (dto.newUserName() != null && !dto.newUserName().isBlank()) {
+            if (userRepository.existsByUserName(dto.newUserName().trim())) {
                 throw new RuntimeException("El nombre de usuario no está disponible.");
             }
             currentUser.setUserName(dto.newUserName().trim());
         }
-        
-        userRepository.findByEmail(dto.newEmail()).ifPresent(existingUser -> {
-            if (currentUser.getEmail() == null || !existingUser.getEmail().equals(currentUser.getEmail())) {
-                throw new RuntimeException("El correo ya está en uso.");
-            }
-        });
-        if(dto.newEmail() != null && !dto.newEmail().isBlank()){
+
+        if (dto.newEmail() != null && !dto.newEmail().isBlank()) {
+            userRepository.findByEmail(dto.newEmail()).ifPresent(existingUser -> {
+                if (!existingUser.getId().equals(currentUser.getId())) {
+                    throw new RuntimeException("El correo ya está en uso.");
+                }
+            });
+
             emailValidate(dto.newEmail());
             currentUser.setEmail(dto.newEmail().trim().toLowerCase());
         }
 
+        User updateUser = userRepository.save(currentUser);
 
-       User updateUser =  userRepository.save(currentUser);
-
-       return new UserDTO.Response(
-        updateUser.getId(),
-        updateUser.getUserName(), 
-        updateUser.getEmail(), 
-        updateUser.getImageUser(),
-        updateUser.getUserRole().getNameRole());
+        return new UserDTO.Response(
+                updateUser.getId(),
+                updateUser.getUserName(),
+                updateUser.getEmail(),
+                updateUser.getImageUser(),
+                updateUser.getUserRole().getNameRole()
+        );
     }
+
 
     public void changeMyPassword(UserDTO.ChangePassword dto) {
         Long userId = jwtUtil.getCurrentUserId();

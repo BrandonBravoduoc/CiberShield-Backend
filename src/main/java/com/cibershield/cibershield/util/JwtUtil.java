@@ -11,7 +11,6 @@ import java.util.Objects;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-// JwtUtils.java  ← Crea esta clase en cualquier paquete (recomendado: util o com.cibershield.cibershield.util)
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
@@ -19,10 +18,6 @@ public class JwtUtil {
     private final JwtService jwtService;
 
     private final UserRepository userRepository;
-    /**
-     * Devuelve el ID del usuario que está en el token JWT del header Authorization
-     * Si no hay token o es inválido → lanza excepción
-     */
 
     public boolean isCurrentUserAdmin() {
         Long userId = getCurrentUserId();
