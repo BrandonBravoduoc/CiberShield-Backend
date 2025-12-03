@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cibershield.cibershield.dto.user.ContactDTO;
+import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.Profile;
+import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.service.jwt.JwtService;
@@ -19,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -42,7 +47,7 @@ public class UserController {
     private UserRepository userRepository;
 
 
-   @GetMapping
+   @GetMapping("profile")
     public ResponseEntity<Profile> myProfile(HttpServletRequest request) {
         String token = request.getHeader("X-TOKEN");
         if (token == null) {
@@ -56,6 +61,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return ResponseEntity.ok(userService.myProfile(currentUser));
     }
+
 
     
     @PostMapping("/contact")
@@ -89,7 +95,17 @@ public class UserController {
         }
     }
 
-    
+    @PatchMapping("/me")
+    public ResponseEntity<?> updateCurrentUser(@RequestBody UpdateUser dto) {
+        try {
+            UserDTO.Response updated = userService.userUpdate(dto);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
+        }
+    }
 
 
 }

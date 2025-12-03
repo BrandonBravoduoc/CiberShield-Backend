@@ -7,6 +7,7 @@ import com.cibershield.cibershield.dto.user.RoleDTO;
 import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
+import com.cibershield.cibershield.util.JwtUtil;
 
 @Service
 public class UserRoleService {
@@ -17,10 +18,16 @@ public class UserRoleService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired 
+    private JwtUtil jwtUtil;
  
     
     public RoleDTO.Response createRole(RoleDTO.CreateRole dto){
 
+        if(!jwtUtil.isCurrentUserAdmin()){
+            throw new RuntimeException("No tienes permisos suficientes para crear un Rol.");
+        }
         String nameRole = dto.nameRole().trim().toUpperCase();
         if(nameRole == null || dto.nameRole().isEmpty()){
             throw new RuntimeException("El nombre del rol es obligatorio.");

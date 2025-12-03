@@ -1,6 +1,7 @@
 package com.cibershield.cibershield.service.product;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,17 +19,22 @@ public class CategoryService {
     @Autowired
     private CategoryRespository categoryRepository;
 
-    public List<Category> searchAll() {
-        return categoryRepository.findAll();
-    }
-    public Category searchById(Long id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+    public List<CategoryDTO.Response> findAll() {
+        return categoryRepository.findAll().stream()
+                .map(this::mapToResponse) 
+                .collect(Collectors.toList());
     }
 
-    public Category searchByName(String name) {
-        return categoryRepository.findByCategoryName(name)
+    public CategoryDTO.Response findById(Long id) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        return mapToResponse(category);
+    }
+
+    public CategoryDTO.Response searchByName(String name) {
+        Category category = categoryRepository.findByCategoryName(name)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        return mapToResponse(category);
     }
 
     public CategoryDTO.Response saveCategory(CategoryDTO.Create dto) {
@@ -40,6 +46,7 @@ public class CategoryService {
         }
 
         String standardized = dto.categoryName().trim().toUpperCase();
+
         if (categoryRepository.existsByCategoryName(standardized)) {
             throw new RuntimeException("El nombre de la categoría ya existe");
         }
@@ -48,9 +55,8 @@ public class CategoryService {
         category.setCategoryName(standardized);
 
         category = categoryRepository.save(category);
-        return new CategoryDTO.Response(
-                category.getId(),
-                category.getCategoryName());
+
+        return mapToResponse(category);
     }
 
     public void deleteCategory(Long id) {
@@ -58,5 +64,11 @@ public class CategoryService {
             throw new RuntimeException("Categoría no encontrada.");
         }
         categoryRepository.deleteById(id);
+    }
+
+    private CategoryDTO.Response mapToResponse(Category c) {
+        return new CategoryDTO.Response(
+                c.getId(),
+                c.getCategoryName());
     }
 }

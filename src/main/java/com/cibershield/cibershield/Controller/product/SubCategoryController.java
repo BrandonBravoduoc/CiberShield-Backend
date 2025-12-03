@@ -11,25 +11,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
-import com.cibershield.cibershield.service.product.ProductService;
+import com.cibershield.cibershield.dto.productsDTO.SubCategoryDTO;
+import com.cibershield.cibershield.service.product.SubCategoryService;
 
 @RestController
-@RequestMapping("/api/v1/products")
-public class ProductController {
+@RequestMapping("/api/v1/subcategorys")
+public class SubCategoryController {
 
     @Autowired
-    private ProductService productService;
+    private SubCategoryService subCategoryService;
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO.Response>> listAll() {
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<List<SubCategoryDTO.Response>> listAll() {
+        return ResponseEntity.ok(subCategoryService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(productService.findById(id));
+            return ResponseEntity.ok(subCategoryService.findById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(e.getMessage());
         }
@@ -38,11 +38,10 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            productService.deleteProduct(id);
+            subCategoryService.deleteSubCategory(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(e.getMessage());
         }
     }
-
 }

@@ -120,7 +120,6 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    
     private ProductDTO.Response mapToResponse(Product p) {
         return new ProductDTO.Response(
                 p.getId(),

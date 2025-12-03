@@ -153,4 +153,18 @@ public class AdminController {
         }
     }
 
+
+    @DeleteMapping("/regions/{regionName}")
+    public ResponseEntity<?>deleteRegion(@PathVariable String regionName){
+        try{
+                regionService.deleteRegion(regionName);
+                return ResponseEntity.noContent().build();
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno del servidor.");
+        }
+    }
+
 }
