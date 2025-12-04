@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -47,7 +46,7 @@ public class UserController {
     private UserRepository userRepository;
 
 
-   @GetMapping("profile")
+   @GetMapping("/profile")
     public ResponseEntity<Profile> myProfile(HttpServletRequest request) {
         String token = request.getHeader("X-TOKEN");
         if (token == null) {
@@ -106,6 +105,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
         }
     }
+    
+
+    @PatchMapping("/me/change-password")
+    public ResponseEntity<?> changeMyPassword(@Valid @RequestBody UserDTO.ChangePassword dto) {
+        try {
+            userService.changeMyPassword(dto);
+            return ResponseEntity.ok("Contraseña actualizada exitosamente");
+            
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ex.getMessage());
+                    
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno del servidor.");
+        }
+    }
+    
 
 
 }
