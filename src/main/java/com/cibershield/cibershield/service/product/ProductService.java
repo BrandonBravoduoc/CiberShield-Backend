@@ -2,9 +2,11 @@ package com.cibershield.cibershield.service.product;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.model.product.Product;
@@ -13,6 +15,10 @@ import com.cibershield.cibershield.model.product.TradeMark;
 import com.cibershield.cibershield.repository.product.ProductRepository;
 import com.cibershield.cibershield.repository.product.SubCategoryRepository;
 import com.cibershield.cibershield.repository.product.TradeMarkRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
+import java.io.IOException;
 
 import jakarta.transaction.Transactional;
 
@@ -25,6 +31,9 @@ public class ProductService {
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Autowired
     private TradeMarkRepository tradeMarkRepository;
@@ -41,7 +50,7 @@ public class ProductService {
         return mapToResponse(product);
     }
 
-    public ProductDTO.Response createProduct(ProductDTO.Create dto) {
+    public ProductDTO.Response createProduct(ProductDTO.Create dto, MultipartFile imageFile) {
         if (productRepository.findByProductName(dto.productName()).isPresent()) {
             throw new RuntimeException("Ya existe un producto con ese nombre.");
         }
@@ -50,12 +59,23 @@ public class ProductService {
 
         TradeMark tradeMark = tradeMarkRepository.findById(dto.tradeMarkId())
                 .orElseThrow(() -> new RuntimeException("La marca no existe."));
+        String imageUrl = dto.url();
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                Map<?, ?> result = cloudinary.uploader().upload(
+                        imageFile.getBytes(),
+                        ObjectUtils.asMap("folder", "cibershield/products"));
+                imageUrl = (String) result.get("secure_url");
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir la imagen del producto");
+            }
+        }
 
         Product product = new Product();
         product.setProductName(dto.productName());
         product.setStock(dto.stock());
         product.setPrice(dto.price());
-        product.setUrl(dto.url());
+        product.setUrl(imageUrl);
         product.setSubCategory(subCategory);
         product.setTradeMark(tradeMark);
 
@@ -64,7 +84,7 @@ public class ProductService {
         return mapToResponse(product);
     }
 
-    public ProductDTO.Response updateProduct(Long id, ProductDTO.Update dto) {
+    public ProductDTO.Response updateProduct(Long id, ProductDTO.Update dto, MultipartFile imageFile) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado."));
 
@@ -77,10 +97,28 @@ public class ProductService {
         if (dto.price() != null) {
             product.setPrice(dto.price());
         }
-        if (dto.url() != null) {
+        if (dto.subCategoryId() != null) {
+            SubCategory subCat = subCategoryRepository.findById(dto.subCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada"));
+            product.setSubCategory(subCat);
+        }
+        if (dto.tradeMarkId() != null) {
+            TradeMark tradeMark = tradeMarkRepository.findById(dto.tradeMarkId())
+                    .orElseThrow(() -> new RuntimeException("Marca no encontrada"));
+            product.setTradeMark(tradeMark);
+        }
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                Map<?, ?> result = cloudinary.uploader().upload(
+                        imageFile.getBytes(),
+                        ObjectUtils.asMap("folder", "cibershield/products"));
+                product.setUrl((String) result.get("secure_url"));
+            } catch (IOException e) {
+                throw new RuntimeException("Error al actualizar la imagen");
+            }
+        } else if (dto.url() != null && !dto.url().isBlank()) {
             product.setUrl(dto.url());
         }
-
         if (dto.subCategoryId() != null) {
             SubCategory subCat = subCategoryRepository.findById(dto.subCategoryId())
                     .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada"));

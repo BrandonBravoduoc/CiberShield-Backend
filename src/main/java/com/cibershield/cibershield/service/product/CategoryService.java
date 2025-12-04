@@ -39,10 +39,10 @@ public class CategoryService {
 
     public CategoryDTO.Response saveCategory(CategoryDTO.Create dto) {
         if (dto == null) {
-            throw new RuntimeException("La categoría no puede estar nula");
+            throw new IllegalArgumentException("La categoría no puede estar nula");
         }
         if (dto.categoryName() == null || dto.categoryName().trim().isBlank()) {
-            throw new RuntimeException("El nombre de la categoría no puede estar vacío.");
+            throw new IllegalArgumentException("El nombre de la categoría no puede estar vacío.");
         }
 
         String standardized = dto.categoryName().trim().toUpperCase();
