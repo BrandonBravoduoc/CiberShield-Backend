@@ -38,16 +38,15 @@ public class UserService {
         if(dto.userName() == null || dto.userName().trim().isEmpty()){
             throw new RuntimeException("El nombre de usuario es obligatorio.");
         }
-        String email = dto.email().trim().toLowerCase();
+        String email = emailValidate(dto.email());
 
         if(userRepository.existsByUserName(dto.userName())){
             throw new RuntimeException("El nombre de usuario no está disponible.");
         } 
+    
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("El correo ya está en uso.");
         }
-
-        emailValidate(email);
         passwordValidate(dto.password(),dto.confirmPassword());
 
         User user = new User();
@@ -151,10 +150,11 @@ public class UserService {
         userRepository.save(user);
     }
 
-   public void emailValidate(String email) {
+    public String emailValidate(String email) {
         if (email == null || email.isBlank()) {
             throw new RuntimeException("El correo es obligatorio.");
         }
+
         String normalizedEmail = email
             .trim()
             .replaceAll("[\\n\\t\\r\"]", "")
@@ -163,6 +163,8 @@ public class UserService {
         if (!normalizedEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             throw new RuntimeException("El formato del correo no es válido.");
         }
+
+        return normalizedEmail;
     }
 
 
