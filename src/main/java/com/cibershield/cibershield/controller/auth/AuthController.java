@@ -80,15 +80,10 @@ public class AuthController {
 
     @PostMapping("/singin")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
-        if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new RuntimeException("Debe ingresar un correo.");
-        }
 
-        if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new RuntimeException("Debe ingresar una contraseña.");
-        }
+        String email = userService.emailValidate(dto.getEmail()); 
 
-        User user = userRepository.findByEmail(dto.getEmail().trim().toLowerCase())
+        User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
@@ -97,16 +92,18 @@ public class AuthController {
 
         String token = jwtService.generateToken(user);
 
-        UserDTO.Response userResponse = new UserDTO.Response(
-            user.getId(),
-            user.getUserName(),
-            user.getEmail(),
-            user.getImageUser(),
-            user.getUserRole().getNameRole()
+        AuthResponseDTO response = new AuthResponseDTO(
+            token,
+            new UserDTO.Response(
+                user.getId(),
+                user.getUserName(),
+                user.getEmail(),
+                user.getImageUser(),
+                user.getUserRole().getNameRole()
+            )
         );
-
-        AuthResponseDTO response = new AuthResponseDTO(token, userResponse);
 
         return ResponseEntity.ok(response);
     }
+
 }
