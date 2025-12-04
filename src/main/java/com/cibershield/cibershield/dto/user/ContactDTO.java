@@ -12,6 +12,17 @@ public class ContactDTO {
     ){}
 
 
+    public record UpdateContactWithAddress(
+        Long id,
+        String name,
+        String lastName,
+        String phone,
+        String street,
+        String number,
+        Long communeId
+    ) {}
+
+
     public record Response(
         Long id,
         String name,

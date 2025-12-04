@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cibershield.cibershield.dto.user.CommuneDTO;
@@ -64,6 +65,20 @@ public class AdminController {
         }
     }
     
+    @DeleteMapping("/role")
+    public ResponseEntity<?>deleteRole(@RequestParam Long id){
+        try {
+            userRoleService.deleteRole(id);
+            return ResponseEntity.noContent().build();
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
+        }
+    }
+
+
+
 
    @PostMapping("/regions/{regionId}/communes")
     public ResponseEntity<?> createCommune(
@@ -128,7 +143,21 @@ public class AdminController {
         }
     }
     
+    @GetMapping("/regions")
+    public ResponseEntity<String> findByName(@RequestParam String regionName) {
+        try {
+            regionService.findByRegionName(regionName);
+            return ResponseEntity.ok(regionName);
+        } catch (RuntimeException e) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
+        }
+    }
     
+
+
+
 // =================== ENDPOINTS TO UPDATE =====================
 
 

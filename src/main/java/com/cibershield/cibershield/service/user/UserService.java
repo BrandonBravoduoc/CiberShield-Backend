@@ -15,7 +15,6 @@ import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.ContactRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
-import com.cibershield.cibershield.util.JwtUtil;
 
 import jakarta.transaction.Transactional;
 
@@ -24,7 +23,7 @@ import jakarta.transaction.Transactional;
 public class UserService {
 
     @Autowired
-    private  UserRoleRepository userRoleRepository;
+    private UserRoleRepository userRoleRepository;
     
     @Autowired
     private UserRepository userRepository;
@@ -34,10 +33,6 @@ public class UserService {
 
     @Autowired
     private ContactRepository contactRepository;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
 
     public UserDTO.Response createUser(UserDTO.Register dto){
         if(dto.userName() == null || dto.userName().trim().isEmpty()){
@@ -105,9 +100,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO.Response userUpdate(UpdateUser dto) {
-
-        Long userId = jwtUtil.getCurrentUserId();
+    public UserDTO.Response userUpdate(UpdateUser dto, Long userId) {
 
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -141,9 +134,8 @@ public class UserService {
         );
     }
 
+    public void changeMyPassword(UserDTO.ChangePassword dto, Long userId) {
 
-    public void changeMyPassword(UserDTO.ChangePassword dto) {
-        Long userId = jwtUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -158,7 +150,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     public void emailValidate(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new RuntimeException("El correo es obligatorio.");
@@ -168,7 +159,6 @@ public class UserService {
         if (!normalizedEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             throw new RuntimeException("El formato del correo no es válido.");
         }
-
     }
 
     public void passwordValidate(String password, String confirmPassword){
@@ -198,13 +188,11 @@ public class UserService {
         }
     }
 
-
     public UserDTO.Profile myProfile(User currentUser) {
 
         Contact contact = contactRepository.findByUser(currentUser)
             .orElse(null);
 
-      
         String addressInfo = null;
         if (contact != null && contact.getAddress() != null) {
             Address addr = contact.getAddress();
@@ -224,10 +212,6 @@ public class UserService {
             contact != null ? contact.getLastName() : "Ingresa tu apellido",
             contact != null ? contact.getPhone() : "Ingresa tu teléfono",
             addressInfo 
-          
         );
     }
-
-
-
 }

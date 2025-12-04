@@ -23,11 +23,6 @@ public class RegionService {
         return regionRepository.findAllByOrderByRegionNameAsc();
     }
 
-    public Region findById(Long regionId){
-        return regionRepository.findById(regionId)
-            .orElseThrow(()-> new RuntimeException("Región no encontrada."));
-    }
-
     public Region findByRegionName(String regionName){
         return regionRepository.findByRegionName(regionName)
             .orElseThrow(()-> new RuntimeException("Region no encontrada."));

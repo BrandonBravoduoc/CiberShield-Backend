@@ -45,6 +45,20 @@ public class AddressService {
         );
     }
     
+    public Address createAndSaveAddress(String street, String number, Long communeId) {
+        addressValidation(street, number);
+
+        Commune commune = communeRepository.findById(communeId)
+            .orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
+
+        Address address = new Address();
+        address.setStreet(street.trim());
+        address.setNumber(number.trim());
+        address.setCommune(commune);
+
+        return addressRepository.save(address);
+    }
+
 
     public void addressValidation(String street, String number){
         if(street == null || street.trim().isEmpty()){
