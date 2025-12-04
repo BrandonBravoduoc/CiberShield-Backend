@@ -151,16 +151,20 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void emailValidate(String email) {
-        if (email == null || email.trim().isEmpty()) {
+   public void emailValidate(String email) {
+        if (email == null || email.isBlank()) {
             throw new RuntimeException("El correo es obligatorio.");
         }
+        String normalizedEmail = email
+            .trim()
+            .replaceAll("[\\n\\t\\r\"]", "")
+            .toLowerCase();
 
-        String normalizedEmail = email.trim().toLowerCase();
         if (!normalizedEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             throw new RuntimeException("El formato del correo no es válido.");
         }
     }
+
 
     public void passwordValidate(String password, String confirmPassword){
         if(password == null || password.trim().isEmpty()) {
