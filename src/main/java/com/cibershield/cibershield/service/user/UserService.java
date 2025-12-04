@@ -43,9 +43,10 @@ public class UserService {
         if(userRepository.existsByUserName(dto.userName())){
             throw new RuntimeException("El nombre de usuario no está disponible.");
         } 
-        userRepository.findByEmail(email)
-            .orElseThrow(()-> new RuntimeException("El correo ya está en uso."));
-            
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("El correo ya está en uso.");
+        }
+
         emailValidate(email);
         passwordValidate(dto.password(),dto.confirmPassword());
 
