@@ -10,10 +10,12 @@ import com.cibershield.cibershield.dto.productsDTO.TradeMarkDTO;
 import com.cibershield.cibershield.model.product.TradeMark;
 import com.cibershield.cibershield.repository.product.TradeMarkRepository;
 
-import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.Transactional;
+
+
 
 @Service
-@TransactionScoped
+@Transactional
 public class TradeMarkService {
 
     @Autowired

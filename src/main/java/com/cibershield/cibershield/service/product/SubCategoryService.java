@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.dto.productsDTO.SubCategoryDTO;
 import com.cibershield.cibershield.model.product.Category;
@@ -11,6 +12,10 @@ import com.cibershield.cibershield.model.product.SubCategory;
 import com.cibershield.cibershield.repository.product.CategoryRespository;
 import com.cibershield.cibershield.repository.product.SubCategoryRepository;
 
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
 public class SubCategoryService {
 
     @Autowired

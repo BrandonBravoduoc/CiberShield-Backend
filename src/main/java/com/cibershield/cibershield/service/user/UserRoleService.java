@@ -9,7 +9,10 @@ import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
 import com.cibershield.cibershield.util.JwtUtil;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserRoleService {
 
 

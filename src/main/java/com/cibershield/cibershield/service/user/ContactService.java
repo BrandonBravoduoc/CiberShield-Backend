@@ -13,7 +13,10 @@ import com.cibershield.cibershield.repository.user.CommuneRepository;
 import com.cibershield.cibershield.repository.user.ContactRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class ContactService {
 
     @Autowired 
