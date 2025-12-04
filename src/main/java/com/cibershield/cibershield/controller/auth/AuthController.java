@@ -49,15 +49,17 @@ public class AuthController {
 
 
 
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(
-            @RequestPart("userName") String userName,
-            @RequestPart("email") String email,
-            @RequestPart("password") String password,
-            @RequestPart("confirmPassword") String confirmPassword,
+            @RequestPart("data") Map<String, String> data,
             @RequestPart(value = "imageUser", required = false) MultipartFile imageUser
     ) {
         try {
+
+            String userName = data.get("userName");
+            String email = data.get("email");
+            String password = data.get("password");
+            String confirmPassword = data.get("confirmPassword");
 
             String imageUrl = "https://res.cloudinary.com/dyf3i5iqa/image/upload/cibershield/default-avatar.png";
 
@@ -71,12 +73,11 @@ public class AuthController {
                     return ResponseEntity.badRequest().body("Solo se permiten imágenes");
                 }
 
-               Map<?, ?> result = cloudinary.uploader().upload(
-                    imageUser.getBytes(),
-                    ObjectUtils.asMap(
-                        "folder", "cibershield/users"
-                    )
+                Map<?, ?> result = cloudinary.uploader().upload(
+                        imageUser.getBytes(),
+                        ObjectUtils.asMap("folder", "cibershield/users")
                 );
+
                 imageUrl = (String) result.get("secure_url");
             }
 
@@ -97,7 +98,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error interno del servidor");
         }
-    }
+}
+
 
     
 
