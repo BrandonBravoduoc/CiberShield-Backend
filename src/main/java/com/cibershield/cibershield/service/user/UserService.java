@@ -29,34 +29,39 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private ContactRepository contactRepository;
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserDTO.Response createUser(UserDTO.Register dto){
+        
         if(dto.userName() == null || dto.userName().trim().isEmpty()){
             throw new RuntimeException("El nombre de usuario es obligatorio.");
         }
+
         String email = emailValidate(dto.email());
 
-        if(userRepository.existsByUserName(dto.userName())){
+        if (userRepository.existsByUserName(dto.userName())) {
             throw new RuntimeException("El nombre de usuario no está disponible.");
-        } 
-    
+        }
+
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("El correo ya está en uso.");
         }
-        passwordValidate(dto.password(),dto.confirmPassword());
+
+        passwordValidate(dto.password(), dto.confirmPassword());
 
         User user = new User();
         user.setUserName(dto.userName());
-        user.setImageUser(dto.imageUser());
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(dto.password()));
 
+        user.setImageUser(dto.imageUser());
+
         UserRole userRole = userRoleRepository.findByNameRole("CLIENTE")
-            .orElseThrow(()-> new RuntimeException("Rol no encontrado."));
+            .orElseThrow(() -> new RuntimeException("Rol no encontrado."));
         user.setUserRole(userRole);
 
         user = userRepository.save(user);
@@ -69,6 +74,7 @@ public class UserService {
             userRole.getNameRole()
         );
     }
+
 
     public List<UserDTO.Response> listUsers(){
         return userRepository.findAll().stream()    

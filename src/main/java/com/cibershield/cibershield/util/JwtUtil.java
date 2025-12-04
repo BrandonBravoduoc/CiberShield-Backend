@@ -5,7 +5,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cibershield.cibershield.repository.user.UserRepository;
-import com.cibershield.cibershield.service.jwt.JwtService;
+import com.cibershield.cibershield.service.util.JwtService;
 
 import java.util.Objects;
 import jakarta.servlet.http.HttpServletRequest;
