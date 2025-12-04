@@ -87,7 +87,6 @@ public class ProductService {
     public ProductDTO.Response updateProduct(Long id, ProductDTO.Update dto, MultipartFile imageFile) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado."));
-
         if (dto.productName() != null && !dto.productName().isBlank()) {
             product.setProductName(dto.productName());
         }

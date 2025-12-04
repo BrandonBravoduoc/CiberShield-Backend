@@ -2,7 +2,7 @@ package com.cibershield.cibershield.controller.product;
 
 import java.util.List;
 
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +30,7 @@ public class TradeMarkController {
         try {
             return ResponseEntity.ok(tradeMarkService.findById(id));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class TradeMarkController {
             tradeMarkService.deleteTradeMark(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
