@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.cibershield.cibershield.model.order.ShippingMethod;
 
 @Repository
-public interface ShippingMethodRepository extends JpaRepository<ShippingMethod, Long> {
+public interface ShippingMethodRepository extends JpaRepository<ShippingMethod, Integer> {
 
+    boolean existsByMethodName(String methodName);
 }
