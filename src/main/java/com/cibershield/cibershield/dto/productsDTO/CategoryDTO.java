@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 public class CategoryDTO {
 
     public record Create(
-            @NotBlank(message = "El nombre de la categoría es obligatorio") String categoryName) {
+            @NotBlank(message = "El nombre de la categoría es obligatorio") 
+            String categoryName) {
     }
 
     public record Response(
