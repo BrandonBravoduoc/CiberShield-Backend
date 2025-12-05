@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.cibershield.cibershield.dto.auth.AuthResponseDTO;
-import com.cibershield.cibershield.dto.auth.LoginDTO;
+
+import com.cibershield.cibershield.dto.auth.AuthDTO;
 import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.RegisterRequest;
 import com.cibershield.cibershield.model.user.User;
@@ -78,31 +78,37 @@ public class AuthController {
     
 
     @PostMapping("/singin")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthDTO.LoginDTO dto) {
+        try {
+            String email = userService.emailValidate(dto.email());
 
-        String email = userService.emailValidate(dto.getEmail()); 
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
 
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
+            if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
+                throw new RuntimeException("La contraseña es incorrecta.");
+            }
+            String token = jwtService.generateToken(user);
 
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("La contraseña es incorrecta.");
+            AuthDTO.authResponse response = new AuthDTO.authResponse(
+                    token,
+                    new UserDTO.Response(
+                            user.getId(),
+                            user.getUserName(),
+                            user.getEmail(),
+                            user.getImageUser(),
+                            user.getUserRole().getNameRole()
+                    )
+            );
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error interno del servidor"));
         }
-
-        String token = jwtService.generateToken(user);
-
-        AuthResponseDTO response = new AuthResponseDTO(
-            token,
-            new UserDTO.Response(
-                user.getId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getImageUser(),
-                user.getUserRole().getNameRole()
-            )
-        );
-
-        return ResponseEntity.ok(response);
     }
+
 
 }
