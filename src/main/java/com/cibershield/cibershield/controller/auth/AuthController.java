@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import com.cibershield.cibershield.dto.auth.AuthResponseDTO;
 import com.cibershield.cibershield.dto.auth.LoginDTO;
 import com.cibershield.cibershield.dto.user.UserDTO;
@@ -23,7 +23,6 @@ import com.cibershield.cibershield.service.util.CloudinaryService;
 import com.cibershield.cibershield.service.util.JwtService;
 
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
