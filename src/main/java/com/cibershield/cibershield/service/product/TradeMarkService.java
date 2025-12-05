@@ -12,8 +12,6 @@ import com.cibershield.cibershield.repository.product.TradeMarkRepository;
 
 import jakarta.transaction.Transactional;
 
-
-
 @Service
 @Transactional
 public class TradeMarkService {
@@ -43,9 +41,26 @@ public class TradeMarkService {
         return mapToResponse(t);
     }
 
-    public void deleteTradeMark(Long id){
+    public TradeMarkDTO.Response update(Long id, TradeMarkDTO.Update dto) {
+        TradeMark tradeMark = tradeMarkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Marca no encontrada."));
+
+        if (dto.tradeMarkName() != null && !dto.tradeMarkName().isBlank()) {
+            if (tradeMarkRepository.existsByTradeMarkName(dto.tradeMarkName()) &&
+                    !tradeMark.getTradeMarkName().equalsIgnoreCase(dto.tradeMarkName())) {
+                throw new RuntimeException("Ya existe una marca con ese nombre.");
+            }
+            tradeMark.setTradeMarkName(dto.tradeMarkName());
+        }
+
+        tradeMark = tradeMarkRepository.save(tradeMark);
+        return mapToResponse(tradeMark);
+    }
+
+
+    public void deleteTradeMark(Long id) {
         if (!tradeMarkRepository.existsById(id)) {
-            throw new RuntimeException("Marca comercial no encontrada");    
+            throw new RuntimeException("Marca comercial no encontrada");
         }
         tradeMarkRepository.deleteById(id);
     }

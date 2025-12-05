@@ -41,7 +41,25 @@ public class SubCategoryService {
                 .orElseThrow(() -> new RuntimeException("La categoría padre no existe."));
         SubCategory subCategory = new SubCategory();
         subCategory.setSubCategoryName(dto.subCategoryName());
-        subCategory.setCategory(category); 
+        subCategory.setCategory(category);
+        subCategory = subCategoryRepository.save(subCategory);
+        return mapToResponse(subCategory);
+    }
+
+    public SubCategoryDTO.Response update(Long id, SubCategoryDTO.Update dto) {
+        SubCategory subCategory = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada."));
+
+        if (dto.subCategoryName() != null && !dto.subCategoryName().isBlank()) {
+            subCategory.setSubCategoryName(dto.subCategoryName());
+        }
+
+        if (dto.categoryId() != null) {
+            Category category = categoryRepository.findById(dto.categoryId())
+                    .orElseThrow(() -> new RuntimeException("La categoría padre no existe."));
+            subCategory.setCategory(category);
+        }
+
         subCategory = subCategoryRepository.save(subCategory);
         return mapToResponse(subCategory);
     }
