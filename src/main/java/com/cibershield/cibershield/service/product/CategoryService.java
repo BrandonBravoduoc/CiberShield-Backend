@@ -21,7 +21,7 @@ public class CategoryService {
 
     public List<CategoryDTO.Response> findAll() {
         return categoryRepository.findAll().stream()
-                .map(this::mapToResponse) 
+                .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -34,6 +34,24 @@ public class CategoryService {
     public CategoryDTO.Response searchByName(String name) {
         Category category = categoryRepository.findByCategoryName(name)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        return mapToResponse(category);
+    }
+
+    public CategoryDTO.Response updateCategory(Long id, CategoryDTO.Update dto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada."));
+
+        if (dto.categoryName() != null && !dto.categoryName().isBlank()) {
+            String standardized = dto.categoryName().trim().toUpperCase();
+            if (categoryRepository.existsByCategoryName(standardized) &&
+                    !category.getCategoryName().equals(standardized)) {
+                throw new RuntimeException("El nombre de la categoría ya existe.");
+            }
+
+            category.setCategoryName(standardized);
+        }
+
+        category = categoryRepository.save(category);
         return mapToResponse(category);
     }
 
