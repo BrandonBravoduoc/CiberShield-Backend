@@ -2,11 +2,13 @@ package com.cibershield.cibershield.service.product;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+// Importamos el servicio de utilidad donde está la lógica de la imagen
+import com.cibershield.cibershield.service.util.CloudinaryService;
 
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.model.product.Product;
@@ -15,10 +17,6 @@ import com.cibershield.cibershield.model.product.TradeMark;
 import com.cibershield.cibershield.repository.product.ProductRepository;
 import com.cibershield.cibershield.repository.product.SubCategoryRepository;
 import com.cibershield.cibershield.repository.product.TradeMarkRepository;
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-
-import java.io.IOException;
 
 import jakarta.transaction.Transactional;
 
@@ -28,15 +26,12 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-
-    @Autowired
-    private Cloudinary cloudinary;
-
     @Autowired
     private TradeMarkRepository tradeMarkRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public List<ProductDTO.Response> findAll() {
         return productRepository.findAll().stream()
@@ -51,24 +46,19 @@ public class ProductService {
     }
 
     public ProductDTO.Response createProduct(ProductDTO.Create dto, MultipartFile imageFile) {
+
         if (productRepository.findByProductName(dto.productName()).isPresent()) {
             throw new RuntimeException("Ya existe un producto con ese nombre.");
         }
         SubCategory subCategory = subCategoryRepository.findById(dto.subCategoryId())
                 .orElseThrow(() -> new RuntimeException("La subcategoría no existe."));
-
         TradeMark tradeMark = tradeMarkRepository.findById(dto.tradeMarkId())
                 .orElseThrow(() -> new RuntimeException("La marca no existe."));
-        String imageUrl = dto.url();
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                Map<?, ?> result = cloudinary.uploader().upload(
-                        imageFile.getBytes(),
-                        ObjectUtils.asMap("folder", "cibershield/products"));
-                imageUrl = (String) result.get("secure_url");
-            } catch (IOException e) {
-                throw new RuntimeException("Error al subir la imagen del producto");
-            }
+
+        String imageUrl = cloudinaryService.uploadProductImage(imageFile);
+
+        if (imageUrl == null) {
+            imageUrl = dto.url();
         }
 
         Product product = new Product();
@@ -80,22 +70,21 @@ public class ProductService {
         product.setTradeMark(tradeMark);
 
         product = productRepository.save(product);
-
         return mapToResponse(product);
     }
 
     public ProductDTO.Response updateProduct(Long id, ProductDTO.Update dto, MultipartFile imageFile) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado."));
+
         if (dto.productName() != null && !dto.productName().isBlank()) {
             product.setProductName(dto.productName());
         }
-        if (dto.stock() != null) {
+        if (dto.stock() != null)
             product.setStock(dto.stock());
-        }
-        if (dto.price() != null) {
+        if (dto.price() != null)
             product.setPrice(dto.price());
-        }
+
         if (dto.subCategoryId() != null) {
             SubCategory subCat = subCategoryRepository.findById(dto.subCategoryId())
                     .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada"));
@@ -106,27 +95,12 @@ public class ProductService {
                     .orElseThrow(() -> new RuntimeException("Marca no encontrada"));
             product.setTradeMark(tradeMark);
         }
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                Map<?, ?> result = cloudinary.uploader().upload(
-                        imageFile.getBytes(),
-                        ObjectUtils.asMap("folder", "cibershield/products"));
-                product.setUrl((String) result.get("secure_url"));
-            } catch (IOException e) {
-                throw new RuntimeException("Error al actualizar la imagen");
-            }
+
+        String newUrl = cloudinaryService.uploadProductImage(imageFile);
+        if (newUrl != null) {
+            product.setUrl(newUrl);
         } else if (dto.url() != null && !dto.url().isBlank()) {
             product.setUrl(dto.url());
-        }
-        if (dto.subCategoryId() != null) {
-            SubCategory subCat = subCategoryRepository.findById(dto.subCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Subcategoría no encontrada"));
-            product.setSubCategory(subCat);
-        }
-        if (dto.tradeMarkId() != null) {
-            TradeMark tradeMark = tradeMarkRepository.findById(dto.tradeMarkId())
-                    .orElseThrow(() -> new RuntimeException("Marca no encontrada"));
-            product.setTradeMark(tradeMark);
         }
 
         product = productRepository.save(product);
@@ -136,24 +110,18 @@ public class ProductService {
     public void reduceStock(Long productId, Integer amount) {
         if (amount < 0)
             throw new RuntimeException("La cantidad no puede ser negativa");
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
         int newStock = product.getStock() - amount;
-
-        if (newStock < 0) {
-            throw new RuntimeException("Stock insuficiente para el producto: " + product.getProductName());
-        }
-
+        if (newStock < 0)
+            throw new RuntimeException("Stock insuficiente para: " + product.getProductName());
         product.setStock(newStock);
         productRepository.save(product);
     }
 
     public void deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
+        if (!productRepository.existsById(id))
             throw new RuntimeException("Producto no encontrado");
-        }
         productRepository.deleteById(id);
     }
 

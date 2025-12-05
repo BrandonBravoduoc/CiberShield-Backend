@@ -21,8 +21,7 @@ public class CloudinaryService {
         try {
             Map<?, ?> result = cloudinary.uploader().upload(
                     file.getBytes(),
-                    ObjectUtils.asMap("folder", "cibershield/users")
-            );
+                    ObjectUtils.asMap("folder", "cibershield/users"));
 
             return (String) result.get("secure_url");
 
@@ -31,8 +30,26 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadProductImage(MultipartFile file) {
+        if (file == null || file.isEmpty())
+            return null;
+        validateImage(file);
+
+        try {
+            Map<?, ?> result = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("folder", "cibershield/products"));
+
+            return (String) result.get("secure_url");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al subir la imagen del producto.");
+        }
+    }
+
     private void validateImage(MultipartFile file) {
-        if (file == null || file.isEmpty()) return;
+        if (file == null || file.isEmpty())
+            return;
 
         if (file.getSize() > 8 * 1024 * 1024) {
             throw new RuntimeException("La imagen no puede pesar más de 8MB");

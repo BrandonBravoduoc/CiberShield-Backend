@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,8 +44,9 @@ public class ProductController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> create(
-            @RequestPart("product") @Valid ProductDTO.Create dto,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @RequestPart("product") @Valid ProductDTO.Create dto, 
+            @RequestPart(value = "image", required = false) MultipartFile image 
+    ) {
         try {
             return new ResponseEntity<>(productService.createProduct(dto, image), HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -60,7 +60,8 @@ public class ProductController {
     public ResponseEntity<?> update(
             @PathVariable Long id,
             @RequestPart("product") @Valid ProductDTO.Update dto,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
         try {
             return ResponseEntity.ok(productService.updateProduct(id, dto, image));
         } catch (RuntimeException e) {
@@ -79,5 +80,4 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
 }
