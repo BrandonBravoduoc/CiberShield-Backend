@@ -60,9 +60,5 @@ public class UserDTO {
         String adressInfo
     ){}
 
-    public record UpdateRequest(
-        
-    ){}
-
 
 }

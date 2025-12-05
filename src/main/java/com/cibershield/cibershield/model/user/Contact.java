@@ -1,6 +1,5 @@
 package com.cibershield.cibershield.model.user;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,8 +37,9 @@ public class Contact {
     @JoinColumn(name = "id_address", nullable = true)
     private Address address;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "id_user", unique = true, nullable = false)
     private User user;
+
 
 }
