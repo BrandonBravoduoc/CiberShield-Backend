@@ -77,7 +77,7 @@ public class AuthController {
 
     
 
-    @PostMapping("/singin")
+    @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO.LoginDTO dto) {
         try {
             String email = userService.emailValidate(dto.email());
