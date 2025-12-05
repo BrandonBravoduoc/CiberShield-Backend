@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-// Importamos el servicio de utilidad donde está la lógica de la imagen
-import com.cibershield.cibershield.service.util.CloudinaryService;
-
+import com.cibershield.cibershield.service.util.CloudinaryService; // Usamos el servicio compartido
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.model.product.Product;
 import com.cibershield.cibershield.model.product.SubCategory;
@@ -46,7 +44,6 @@ public class ProductService {
     }
 
     public ProductDTO.Response createProduct(ProductDTO.Create dto, MultipartFile imageFile) {
-
         if (productRepository.findByProductName(dto.productName()).isPresent()) {
             throw new RuntimeException("Ya existe un producto con ese nombre.");
         }
@@ -57,15 +54,11 @@ public class ProductService {
 
         String imageUrl = cloudinaryService.uploadProductImage(imageFile);
 
-        if (imageUrl == null) {
-            imageUrl = dto.url();
-        }
-
         Product product = new Product();
         product.setProductName(dto.productName());
         product.setStock(dto.stock());
         product.setPrice(dto.price());
-        product.setUrl(imageUrl);
+        product.setUrl(imageUrl); 
         product.setSubCategory(subCategory);
         product.setTradeMark(tradeMark);
 
@@ -77,9 +70,8 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado."));
 
-        if (dto.productName() != null && !dto.productName().isBlank()) {
+        if (dto.productName() != null && !dto.productName().isBlank())
             product.setProductName(dto.productName());
-        }
         if (dto.stock() != null)
             product.setStock(dto.stock());
         if (dto.price() != null)
@@ -99,8 +91,6 @@ public class ProductService {
         String newUrl = cloudinaryService.uploadProductImage(imageFile);
         if (newUrl != null) {
             product.setUrl(newUrl);
-        } else if (dto.url() != null && !dto.url().isBlank()) {
-            product.setUrl(dto.url());
         }
 
         product = productRepository.save(product);
