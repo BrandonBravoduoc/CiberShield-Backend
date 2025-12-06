@@ -22,7 +22,7 @@ public class JwtUtil {
     public boolean isCurrentUserAdmin() {
         Long userId = getCurrentUserId();
         return userRepository.findIdAndRoleNameById(userId)
-                .map(roleName -> "ADMIN".equals(roleName))
+                .map(roleName -> "ADMINISTRADOR".equals(roleName))
                 .orElse(false);
     }
 
