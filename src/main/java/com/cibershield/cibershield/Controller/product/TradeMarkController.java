@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.cibershield.cibershield.dto.productsDTO.TradeMarkDTO;
 import com.cibershield.cibershield.service.product.TradeMarkService;
+import com.cibershield.cibershield.util.JwtUtil;
 
 import jakarta.validation.Valid;
 
@@ -24,6 +25,9 @@ public class TradeMarkController {
 
     @Autowired
     private TradeMarkService tradeMarkService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<TradeMarkDTO.Response>> listAll() {
@@ -42,6 +46,7 @@ public class TradeMarkController {
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody TradeMarkDTO.Create dto) {
         try {
+                        jwtUtil.checkAdmin();
             return new ResponseEntity<>(tradeMarkService.create(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -51,6 +56,7 @@ public class TradeMarkController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody TradeMarkDTO.Update dto) {
         try {
+                            jwtUtil.checkAdmin();
             return ResponseEntity.ok(tradeMarkService.update(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -60,6 +66,7 @@ public class TradeMarkController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+                        jwtUtil.checkAdmin();
             tradeMarkService.deleteTradeMark(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
