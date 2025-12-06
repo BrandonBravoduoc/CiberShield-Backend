@@ -18,6 +18,8 @@ import com.cibershield.cibershield.service.user.CommuneService;
 import com.cibershield.cibershield.service.user.RegionService;
 import com.cibershield.cibershield.service.user.UserRoleService;
 import com.cibershield.cibershield.service.user.UserService;
+import com.cibershield.cibershield.util.JwtUtil;
+
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,9 +46,14 @@ public class AdminController {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    
-
+    private void checkAdmin() {
+        if (!jwtUtil.isCurrentUserAdmin()) {
+            throw new RuntimeException("Acceso denegado. Solo administradores.");
+        }
+    }
 
 // =================== ENDPOINTS TO CREATE =====================
 
@@ -55,6 +62,7 @@ public class AdminController {
         @RequestBody RoleDTO.CreateRole dto){
 
         try{
+            checkAdmin();
             RoleDTO.Response response = userRoleService.createRole(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){
@@ -67,7 +75,8 @@ public class AdminController {
     
     @DeleteMapping("/role")
     public ResponseEntity<?>deleteRole(@RequestParam Long id){
-        try {
+        try{
+            checkAdmin();
             userRoleService.deleteRole(id);
             return ResponseEntity.noContent().build();
         }catch (RuntimeException e) {
@@ -85,7 +94,8 @@ public class AdminController {
             @PathVariable Long regionId,
             @Valid @RequestBody CommuneDTO.Create dto) {
 
-        try {
+        try{
+            checkAdmin();
             CommuneDTO.Response response = communeService.createCommune(dto, regionId);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -102,7 +112,8 @@ public class AdminController {
     @PostMapping("/region")
     public ResponseEntity<?> createRegion(@Valid @RequestBody RegionDTO.Create dto) {
 
-        try {
+        try{
+            checkAdmin();
             RegionDTO.Response response = regionService.createRegion(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -119,7 +130,8 @@ public class AdminController {
 
    @GetMapping("/users")
     public ResponseEntity<List<UserDTO.Response>> listUsers() {
-        try {
+        try{
+            checkAdmin();
             List<UserDTO.Response> users = userService.listUsers();
             return ResponseEntity.ok(users);
 
@@ -132,6 +144,7 @@ public class AdminController {
     @GetMapping("/user/email/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
         try{
+            checkAdmin();
             UserDTO.Response user = userService.findByEmail(email);
             return ResponseEntity.ok(user);
 
@@ -145,7 +158,8 @@ public class AdminController {
     
     @GetMapping("/regions")
     public ResponseEntity<String> findByName(@RequestParam String regionName) {
-        try {
+        try{
+            checkAdmin();
             regionService.findByRegionName(regionName);
             return ResponseEntity.ok(regionName);
         } catch (RuntimeException e) {
@@ -169,8 +183,9 @@ public class AdminController {
     @DeleteMapping("/communes/{communeId}")
     public ResponseEntity<?> deleteCommune(@PathVariable Long communeId){
         try{
-                communeService.deleteCommune(communeId);
-                return ResponseEntity.noContent().build();
+            checkAdmin();
+            communeService.deleteCommune(communeId);
+            return ResponseEntity.noContent().build();
 
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -184,8 +199,9 @@ public class AdminController {
     @DeleteMapping("/regions/{regionName}")
     public ResponseEntity<?>deleteRegion(@PathVariable String regionName){
         try{
-                regionService.deleteRegion(regionName);
-                return ResponseEntity.noContent().build();
+            checkAdmin();
+            regionService.deleteRegion(regionName);
+            return ResponseEntity.noContent().build();
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }catch(Exception e){
