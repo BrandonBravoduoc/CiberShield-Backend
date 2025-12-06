@@ -47,8 +47,8 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CategoryDTO.Create dto) {
-        jwtUtil.checkAdmin();
         try {
+            jwtUtil.checkAdmin();
             return new ResponseEntity<>(categoryService.saveCategory(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -57,8 +57,8 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CategoryDTO.Update dto) {
-        jwtUtil.checkAdmin();
         try {
+            jwtUtil.checkAdmin();
             return ResponseEntity.ok(categoryService.updateCategory(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -67,8 +67,8 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        jwtUtil.checkAdmin();
         try {
+            jwtUtil.checkAdmin();
             categoryService.deleteCategory(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

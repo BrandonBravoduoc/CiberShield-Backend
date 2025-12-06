@@ -46,7 +46,7 @@ public class TradeMarkController {
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody TradeMarkDTO.Create dto) {
         try {
-                        jwtUtil.checkAdmin();
+            jwtUtil.checkAdmin();
             return new ResponseEntity<>(tradeMarkService.create(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -56,7 +56,7 @@ public class TradeMarkController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody TradeMarkDTO.Update dto) {
         try {
-                            jwtUtil.checkAdmin();
+             jwtUtil.checkAdmin();
             return ResponseEntity.ok(tradeMarkService.update(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -66,7 +66,7 @@ public class TradeMarkController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-                        jwtUtil.checkAdmin();
+             jwtUtil.checkAdmin();
             tradeMarkService.deleteTradeMark(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
