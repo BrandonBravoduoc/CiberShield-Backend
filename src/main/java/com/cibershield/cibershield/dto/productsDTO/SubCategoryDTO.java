@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotNull;
 public class SubCategoryDTO {
 
         public record Create(
-                        @NotBlank(message = "El nombre es obligatorio") String subCategoryName,
+                        @NotBlank(message = "El nombre es obligatorio") 
+                        String subCategoryName,
 
-                        @NotNull(message = "Debes indicar la categoría padre") Long categoryId) {
+                        @NotNull(message = "Debes indicar la categoría padre") 
+                        Long categoryId) {
         }
 
         public record Response(

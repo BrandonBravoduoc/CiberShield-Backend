@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 public class TradeMarkDTO {
 
         public record Create(
-                        @NotBlank(message = "El nombre de la marca es obligatorio") String tradeMarkName) {
+                        @NotBlank(message = "El nombre de la marca es obligatorio") 
+                        String tradeMarkName) {
         }
 
         public record Response(

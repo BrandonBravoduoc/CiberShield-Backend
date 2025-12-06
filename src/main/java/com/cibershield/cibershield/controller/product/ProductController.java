@@ -6,16 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.service.product.ProductService;
@@ -44,19 +35,16 @@ public class ProductController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> create(@ModelAttribute ProductDTO.CreateRequest request) {
+    public ResponseEntity<?> create(@ModelAttribute @Valid ProductDTO.CreateRequest request) {
         try {
             ProductDTO.Create dto = new ProductDTO.Create(
                     request.productName(),
                     request.stock(),
                     request.price(),
-                    request.url(),
                     request.subCategoryId(),
                     request.tradeMarkId());
-            return new ResponseEntity<>(
-                    productService.createProduct(dto, request.image()),
-                    HttpStatus.CREATED);
 
+            return new ResponseEntity<>(productService.createProduct(dto, request.image()), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -65,12 +53,16 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> update(
-            @PathVariable Long id,
-            @RequestPart("product") @Valid ProductDTO.Update dto,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+    public ResponseEntity<?> update(@PathVariable Long id, @ModelAttribute @Valid ProductDTO.UpdateRequest request) {
         try {
-            return ResponseEntity.ok(productService.updateProduct(id, dto, image));
+            ProductDTO.Update dto = new ProductDTO.Update(
+                    request.productName(),
+                    request.stock(),
+                    request.price(),
+                    request.subCategoryId(),
+                    request.tradeMarkId());
+
+            return ResponseEntity.ok(productService.updateProduct(id, dto, request.image()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -87,5 +79,4 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
 }
