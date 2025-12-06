@@ -4,6 +4,7 @@ import com.cibershield.cibershield.dto.orderDto.OrderDTO;
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
 import com.cibershield.cibershield.model.order.Order;
 import com.cibershield.cibershield.service.order.OrderService;
+import com.cibershield.cibershield.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<Order>> list() {
@@ -50,6 +54,7 @@ public class OrderController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody OrderStatusDTO.Create dto) {
         try {
+            jwtUtil.checkAdmin();
             return ResponseEntity.ok(orderService.updateOrderStatus(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -59,6 +64,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+            jwtUtil.checkAdmin();
             orderService.searchById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

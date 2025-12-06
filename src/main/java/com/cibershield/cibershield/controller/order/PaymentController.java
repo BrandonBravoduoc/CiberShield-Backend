@@ -2,6 +2,8 @@ package com.cibershield.cibershield.controller.order;
 
 import com.cibershield.cibershield.dto.orderDto.PaymentDTO;
 import com.cibershield.cibershield.service.order.PaymentService;
+import com.cibershield.cibershield.util.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,9 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<PaymentDTO.Response>> list() {
@@ -47,19 +52,21 @@ public class PaymentController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PaymentDTO.Update dto) {
         try {
+            jwtUtil.checkAdmin();
             return ResponseEntity.ok(paymentService.update(id, dto));
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+            jwtUtil.checkAdmin();
             paymentService.searchById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 }
