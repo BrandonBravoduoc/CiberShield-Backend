@@ -2,6 +2,7 @@ package com.cibershield.cibershield.controller.order;
 
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
 import com.cibershield.cibershield.service.order.OrderStatusService;
+import com.cibershield.cibershield.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ public class OrderStatusController {
 
     @Autowired
     private OrderStatusService orderStatusService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<?>> list() {
@@ -38,6 +42,7 @@ public class OrderStatusController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody OrderStatusDTO.Create dto) {
         try {
+            jwtUtil.checkAdmin();
             return new ResponseEntity<>(orderStatusService.create(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -47,6 +52,7 @@ public class OrderStatusController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody OrderStatusDTO.Create dto) {
         try {
+            jwtUtil.checkAdmin();
             return ResponseEntity.ok(orderStatusService.update(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -56,6 +62,7 @@ public class OrderStatusController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+            jwtUtil.checkAdmin();
             orderStatusService.searchById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

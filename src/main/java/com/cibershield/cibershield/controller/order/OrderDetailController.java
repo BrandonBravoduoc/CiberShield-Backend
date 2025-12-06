@@ -2,6 +2,8 @@ package com.cibershield.cibershield.controller.order;
 
 import com.cibershield.cibershield.model.order.OrderDetail;
 import com.cibershield.cibershield.service.order.OrderDetailService;
+import com.cibershield.cibershield.util.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class OrderDetailController {
 
     @Autowired
     private OrderDetailService orderDetailService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<OrderDetail>> list() {
@@ -38,6 +43,7 @@ public class OrderDetailController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+            jwtUtil.checkAdmin();
             orderDetailService.searchById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
