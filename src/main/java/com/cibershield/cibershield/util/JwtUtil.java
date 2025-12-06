@@ -44,4 +44,10 @@ public class JwtUtil {
 
         return jwtService.getUserIdFromToken(token);
     }
+
+    public void checkAdmin() {
+        if (!isCurrentUserAdmin()) {
+            throw new RuntimeException("Acceso denegado. Solo administradores.");
+        }
+    }
 }

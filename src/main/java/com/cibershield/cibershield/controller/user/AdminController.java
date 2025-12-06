@@ -49,12 +49,6 @@ public class AdminController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private void checkAdmin() {
-        if (!jwtUtil.isCurrentUserAdmin()) {
-            throw new RuntimeException("Acceso denegado. Solo administradores.");
-        }
-    }
-
 // =================== ENDPOINTS TO CREATE =====================
 
     @PostMapping("/role")
@@ -62,7 +56,7 @@ public class AdminController {
         @RequestBody RoleDTO.CreateRole dto){
 
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             RoleDTO.Response response = userRoleService.createRole(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){
@@ -76,7 +70,7 @@ public class AdminController {
     @DeleteMapping("/role")
     public ResponseEntity<?>deleteRole(@RequestParam Long id){
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             userRoleService.deleteRole(id);
             return ResponseEntity.noContent().build();
         }catch (RuntimeException e) {
@@ -95,7 +89,7 @@ public class AdminController {
             @Valid @RequestBody CommuneDTO.Create dto) {
 
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             CommuneDTO.Response response = communeService.createCommune(dto, regionId);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -113,7 +107,7 @@ public class AdminController {
     public ResponseEntity<?> createRegion(@Valid @RequestBody RegionDTO.Create dto) {
 
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             RegionDTO.Response response = regionService.createRegion(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -131,7 +125,7 @@ public class AdminController {
    @GetMapping("/users")
     public ResponseEntity<List<UserDTO.Response>> listUsers() {
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             List<UserDTO.Response> users = userService.listUsers();
             return ResponseEntity.ok(users);
 
@@ -144,7 +138,7 @@ public class AdminController {
     @GetMapping("/user/email/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             UserDTO.Response user = userService.findByEmail(email);
             return ResponseEntity.ok(user);
 
@@ -159,7 +153,7 @@ public class AdminController {
     @GetMapping("/regions")
     public ResponseEntity<String> findByName(@RequestParam String regionName) {
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             regionService.findByRegionName(regionName);
             return ResponseEntity.ok(regionName);
         } catch (RuntimeException e) {
@@ -183,7 +177,7 @@ public class AdminController {
     @DeleteMapping("/communes/{communeId}")
     public ResponseEntity<?> deleteCommune(@PathVariable Long communeId){
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             communeService.deleteCommune(communeId);
             return ResponseEntity.noContent().build();
 
@@ -199,7 +193,7 @@ public class AdminController {
     @DeleteMapping("/regions/{regionName}")
     public ResponseEntity<?>deleteRegion(@PathVariable String regionName){
         try{
-            checkAdmin();
+            jwtUtil.checkAdmin();
             regionService.deleteRegion(regionName);
             return ResponseEntity.noContent().build();
         }catch(RuntimeException e){
