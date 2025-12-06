@@ -26,8 +26,8 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;

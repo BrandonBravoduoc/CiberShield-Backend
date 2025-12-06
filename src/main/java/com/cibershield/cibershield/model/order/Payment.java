@@ -35,9 +35,6 @@ public class Payment {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate paymentDate;
 
-    @Column(name = "payment_status")
-    private String paymentStatus;
-
     @ManyToOne
     @JoinColumn(name = "id_payment_method", nullable = false)
     private PaymentMethod paymentMethod;
