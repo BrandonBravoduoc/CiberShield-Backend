@@ -52,7 +52,6 @@ public class PaymentService {
         Payment payment = new Payment();
         payment.setAmount(dto.amount());
         payment.setPaymentDate(dto.paymentDate());
-        payment.setPaymentStatus(dto.paymentStatus());
         payment.setPaymentMethod(paymentMethod);
         payment.setOrder(order);
 
@@ -73,10 +72,6 @@ public class PaymentService {
 
         if (dto.paymentDate() != null) {
             payment.setPaymentDate(dto.paymentDate());
-        }
-
-        if (dto.paymentStatus() != null) {
-            payment.setPaymentStatus(dto.paymentStatus());
         }
 
         if (dto.paymentMethodId() != null) {
@@ -129,7 +124,6 @@ public class PaymentService {
                 payment.getId(),
                 payment.getAmount(),
                 payment.getPaymentDate(),
-                payment.getPaymentStatus(),
                 payment.getPaymentMethod().getId(),
                 payment.getPaymentMethod().getPaymentName(),
                 payment.getOrder().getId());

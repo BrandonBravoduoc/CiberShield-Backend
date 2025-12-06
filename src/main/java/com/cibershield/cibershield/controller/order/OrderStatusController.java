@@ -1,9 +1,7 @@
 package com.cibershield.cibershield.controller.order;
 
-import com.cibershield.cibershield.dto.orderDto.OrderDTO;
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
-import com.cibershield.cibershield.model.order.Order;
-import com.cibershield.cibershield.service.order.OrderService;
+import com.cibershield.cibershield.service.order.OrderStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/orders")
-public class OrderController {
+@RequestMapping("/api/v1/order-status")
+public class OrderStatusController {
 
     @Autowired
-    private OrderService orderService;
+    private OrderStatusService orderStatusService;
 
     @GetMapping
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<?>> list() {
         try {
-            return ResponseEntity.ok(orderService.searchAll());
+            return ResponseEntity.ok(orderStatusService.searchAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -31,26 +29,25 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(orderService.searchById(id));
+            return ResponseEntity.ok(orderStatusService.searchById(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody OrderDTO.OrderCreate dto) {
+    public ResponseEntity<?> create(@RequestBody OrderStatusDTO.Create dto) {
         try {
-            Long userId = 1L;
-            return new ResponseEntity<>(orderService.create(dto, userId), HttpStatus.CREATED);
+            return new ResponseEntity<>(orderStatusService.create(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody OrderStatusDTO.Create dto) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody OrderStatusDTO.Create dto) {
         try {
-            return ResponseEntity.ok(orderService.updateOrderStatus(id, dto));
+            return ResponseEntity.ok(orderStatusService.update(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -59,7 +56,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            orderService.searchById(id);
+            orderStatusService.searchById(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

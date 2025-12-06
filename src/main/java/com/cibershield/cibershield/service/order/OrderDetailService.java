@@ -1,6 +1,6 @@
 package com.cibershield.cibershield.service.order;
 
-import com.cibershield.cibershield.dto.orderDto.OrderCreateItemDTO;
+import com.cibershield.cibershield.dto.orderDto.OrderDTO;
 import com.cibershield.cibershield.model.order.Order;
 import com.cibershield.cibershield.model.order.OrderDetail;
 import com.cibershield.cibershield.model.order.ShippingMethod;
@@ -34,35 +34,35 @@ public class OrderDetailService {
     }
 
     public OrderDetail createOrderDetail(Order order, Product product,
-            OrderCreateItemDTO.Create item, ShippingMethod shipping) {
+            OrderDTO.CreateItem item, ShippingMethod shipping) {
 
         validateOrderDetail(item, product, shipping);
 
         OrderDetail detail = new OrderDetail();
         detail.setOrder(order);
         detail.setProduct(product);
-        detail.setAmount(item.amount());
+        detail.setQuantity(item.quantity());
         detail.setUnitPrice(product.getPrice());
-        detail.setSubtotal(product.getPrice().multiply(new BigDecimal(item.amount())));
+        detail.setSubtotal(product.getPrice().multiply(new BigDecimal(item.quantity())));
         detail.setShippingMethod(shipping);
 
-        reduceProductStock(product, item.amount());
+        reduceProductStock(product, item.quantity());
 
         return orderDetailRepository.save(detail);
     }
 
-    private void validateOrderDetail(OrderCreateItemDTO.Create item, Product product, ShippingMethod shipping) {
+    private void validateOrderDetail(OrderDTO.CreateItem item, Product product, ShippingMethod shipping) {
         if (item == null || product == null || shipping == null) {
             throw new RuntimeException("Datos del detalle de orden incompletos.");
         }
 
-        if (product.getStock() < item.amount()) {
+        if (product.getStock() < item.quantity()) {
             throw new RuntimeException("No hay suficiente stock de " + product.getProductName());
         }
     }
 
-    private void reduceProductStock(Product product, Integer amount) {
-        int newStock = product.getStock() - amount;
+    private void reduceProductStock(Product product, Integer quantity) {
+        int newStock = product.getStock() - quantity;
         product.setStock(newStock);
         productRepository.save(product);
     }

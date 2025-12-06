@@ -8,7 +8,6 @@ public class PaymentDTO {
         public record Create(
                         BigDecimal amount,
                         LocalDate paymentDate,
-                        String paymentStatus,
                         Long paymentMethodId,
                         Long orderId) {
         }
@@ -16,7 +15,6 @@ public class PaymentDTO {
         public record Update(
                         BigDecimal amount,
                         LocalDate paymentDate,
-                        String paymentStatus,
                         Long paymentMethodId) {
         }
 
@@ -24,7 +22,6 @@ public class PaymentDTO {
                         Long id,
                         BigDecimal amount,
                         LocalDate paymentDate,
-                        String paymentStatus,
                         Long paymentMethodId,
                         String paymentMethodName,
                         Long orderId) {

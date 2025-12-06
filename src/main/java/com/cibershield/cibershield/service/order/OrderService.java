@@ -1,9 +1,6 @@
 package com.cibershield.cibershield.service.order;
 
-import com.cibershield.cibershield.dto.orderDto.OrderCreateDTO;
-import com.cibershield.cibershield.dto.orderDto.OrderCreateItemDTO;
-import com.cibershield.cibershield.dto.orderDto.OrderDetailResponseDTO;
-import com.cibershield.cibershield.dto.orderDto.OrderResponseDTO;
+import com.cibershield.cibershield.dto.orderDto.OrderDTO;
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
 import com.cibershield.cibershield.model.order.Order;
 import com.cibershield.cibershield.model.order.OrderDetail;
@@ -59,7 +56,7 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public OrderResponseDTO create(OrderCreateDTO dto, Long userId) {
+    public OrderDTO.OrderResponseDTO create(OrderDTO.OrderCreate dto, Long userId) {
         validateCreateOrder(dto);
 
         User user = getUserOrNaGrrr(userId); // posible propuesta (segun yo) pq vi q ya no estan usando auth
@@ -73,7 +70,7 @@ public class OrderService {
         return mapToResponseDTO(savedOrder);
     }
 
-    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatusDTO.Create dto) {
+    public OrderDTO.OrderResponseDTO updateOrderStatus(Long orderId, OrderStatusDTO.Create dto) {
         validateStatusDTO(dto);
 
         Order order = searchById(orderId);
@@ -85,7 +82,7 @@ public class OrderService {
         return mapToResponseDTO(updatedOrder);
     }
 
-    private void validateCreateOrder(OrderCreateDTO dto) {
+    private void validateCreateOrder(OrderDTO.OrderCreate dto) {
         if (dto == null || dto.items() == null || dto.items().isEmpty()) {
             throw new RuntimeException("Tu carrito está vacio.");
         }
@@ -97,8 +94,8 @@ public class OrderService {
         }
     }
 
-    private void validateOrderItem(OrderCreateItemDTO.Create item) {
-        if (item.amount() == null || item.amount() < 1) {
+    private void validateOrderItem(OrderDTO.CreateItem item) {
+        if (item.quantity() == null || item.quantity() < 1) {
             throw new RuntimeException("Cantidad inválida");
         }
         if (item.shippingMethodId() == null) {
@@ -126,10 +123,10 @@ public class OrderService {
         return order;
     }
 
-    private BigDecimal processOrderItems(Order order, List<OrderCreateItemDTO.Create> items) {
+    private BigDecimal processOrderItems(Order order, List<OrderDTO.CreateItem> items) {
         BigDecimal total = BigDecimal.ZERO;
 
-        for (OrderCreateItemDTO.Create item : items) {
+        for (OrderDTO.CreateItem item : items) {
             validateOrderItem(item);
 
             Product product = productRepository.findById(item.productId())
@@ -146,8 +143,8 @@ public class OrderService {
         return total;
     }
 
-    private OrderResponseDTO mapToResponseDTO(Order order) {
-        return new OrderResponseDTO(
+    private OrderDTO.OrderResponseDTO mapToResponseDTO(Order order) {
+        return new OrderDTO.OrderResponseDTO(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getOrderDate(),
@@ -157,17 +154,17 @@ public class OrderService {
                 mapOrderDetails(order.getDetails()));
     }
 
-    private List<OrderDetailResponseDTO> mapOrderDetails(List<OrderDetail> details) {
+    private List<OrderDTO.OrderDetailResponse> mapOrderDetails(List<OrderDetail> details) {
         return details.stream()
                 .map(this::mapOrderDetail)
                 .collect(Collectors.toList());
     }
 
-    private OrderDetailResponseDTO mapOrderDetail(OrderDetail detail) {
-        return new OrderDetailResponseDTO(
+    private OrderDTO.OrderDetailResponse mapOrderDetail(OrderDetail detail) {
+        return new OrderDTO.OrderDetailResponse(
                 detail.getProduct().getId(),
                 detail.getProduct().getProductName(),
-                detail.getAmount(),
+                detail.getQuantity(),
                 detail.getUnitPrice(),
                 detail.getSubtotal());
     }
