@@ -11,15 +11,22 @@ import jakarta.validation.constraints.Positive;
 public class ProductDTO {
 
     public record Create(
-            @NotBlank(message = "El nombre del producto es obligatorio") String productName,
+            @NotBlank(message = "El nombre del producto es obligatorio") 
+            String productName,
 
-            @NotNull(message = "El stock es obligatorio") @Min(value = 0, message = "El stock no puede ser negativo") Integer stock,
+            @NotNull(message = "El stock es obligatorio") 
+            @Min(value = 0, message = "El stock no puede ser negativo") 
+            Integer stock,
 
-            @NotNull(message = "El precio es obligatorio") @Positive(message = "El precio debe ser mayor a cero") BigDecimal price,
+            @NotNull(message = "El precio es obligatorio")
+            @Positive(message = "El precio debe ser mayor a cero") 
+            BigDecimal price,
 
-            @NotNull(message = "Debes seleccionar una subcategoría") Long subCategoryId,
+            @NotNull(message = "Debes seleccionar una subcategoría") 
+            Long subCategoryId,
 
-            @NotNull(message = "Debes seleccionar una marca") Long tradeMarkId) {
+            @NotNull(message = "Debes seleccionar una marca") 
+            Long tradeMarkId) {
     }
 
     public record Response(
