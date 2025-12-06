@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cibershield.cibershield.dto.productsDTO.SubCategoryDTO;
 import com.cibershield.cibershield.service.product.SubCategoryService;
+import com.cibershield.cibershield.util.JwtUtil;
 
 import jakarta.validation.Valid;
 
@@ -25,6 +26,9 @@ public class SubCategoryController {
 
     @Autowired
     private SubCategoryService subCategoryService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public ResponseEntity<List<SubCategoryDTO.Response>> listAll() {
@@ -43,6 +47,7 @@ public class SubCategoryController {
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody SubCategoryDTO.Create dto) {
         try {
+            jwtUtil.checkAdmin();
             return new ResponseEntity<>(subCategoryService.create(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -52,6 +57,7 @@ public class SubCategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody SubCategoryDTO.Update dto) {
         try {
+            jwtUtil.checkAdmin();
             return ResponseEntity.ok(subCategoryService.update(id, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -61,6 +67,7 @@ public class SubCategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
+            jwtUtil.checkAdmin();
             subCategoryService.deleteSubCategory(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cibershield.cibershield.dto.productsDTO.CategoryDTO;
 import com.cibershield.cibershield.service.product.CategoryService;
+import com.cibershield.cibershield.util.JwtUtil;
 
 import jakarta.validation.Valid;
 
@@ -27,6 +28,9 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @GetMapping
     public ResponseEntity<List<CategoryDTO.Response>> listAll() {
         return ResponseEntity.ok(categoryService.findAll());
@@ -39,8 +43,11 @@ public class CategoryController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-    }@PostMapping
+    }
+
+    @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CategoryDTO.Create dto) {
+        jwtUtil.checkAdmin();
         try {
             return new ResponseEntity<>(categoryService.saveCategory(dto), HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -50,6 +57,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CategoryDTO.Update dto) {
+        jwtUtil.checkAdmin();
         try {
             return ResponseEntity.ok(categoryService.updateCategory(id, dto));
         } catch (RuntimeException e) {
@@ -59,6 +67,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
+        jwtUtil.checkAdmin();
         try {
             categoryService.deleteCategory(id);
             return ResponseEntity.noContent().build();
