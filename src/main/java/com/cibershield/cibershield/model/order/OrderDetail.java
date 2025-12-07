@@ -3,6 +3,7 @@ package com.cibershield.cibershield.model.order;
 import java.math.BigDecimal;
 
 import com.cibershield.cibershield.model.product.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +38,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "id_order", nullable = false)
+    @JsonIgnore
     private Order order;
 
     @ManyToOne

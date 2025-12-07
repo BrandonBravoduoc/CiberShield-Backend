@@ -30,7 +30,6 @@ public class OrderDTO {
                         LocalDate orderDate,
                         BigDecimal total,
                         String status,
-                        String userName,
                         List<OrderDTO.OrderDetailResponse> details) {
         }
 
