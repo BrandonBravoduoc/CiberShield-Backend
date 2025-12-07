@@ -11,4 +11,6 @@ import com.cibershield.cibershield.model.product.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByProductName(String productName);
+
+    boolean existsByTradeMark_Id(Long tradeMarkId);
 }

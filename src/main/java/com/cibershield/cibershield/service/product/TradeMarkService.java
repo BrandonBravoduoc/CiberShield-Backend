@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.cibershield.cibershield.dto.productsDTO.TradeMarkDTO;
 import com.cibershield.cibershield.model.product.TradeMark;
+import com.cibershield.cibershield.repository.product.ProductRepository;
 import com.cibershield.cibershield.repository.product.TradeMarkRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,6 +19,9 @@ public class TradeMarkService {
 
     @Autowired
     private TradeMarkRepository tradeMarkRepository;
+
+    @Autowired 
+    private ProductRepository productRepository;
 
     public List<TradeMarkDTO.Response> findAll() {
         return tradeMarkRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
@@ -57,10 +61,12 @@ public class TradeMarkService {
         return mapToResponse(tradeMark);
     }
 
-
     public void deleteTradeMark(Long id) {
         if (!tradeMarkRepository.existsById(id)) {
             throw new RuntimeException("Marca comercial no encontrada");
+        }
+        if (productRepository.existsByTradeMark_Id(id)) {
+            throw new RuntimeException("No se puede eliminar la marca porque hay productos asociados a ella.");
         }
         tradeMarkRepository.deleteById(id);
     }

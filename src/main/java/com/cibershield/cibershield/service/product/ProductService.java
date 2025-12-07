@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cibershield.cibershield.service.util.CloudinaryService; 
+import com.cibershield.cibershield.service.util.CloudinaryService;
 import com.cibershield.cibershield.dto.productsDTO.ProductDTO;
 import com.cibershield.cibershield.model.product.Product;
 import com.cibershield.cibershield.model.product.SubCategory;
 import com.cibershield.cibershield.model.product.TradeMark;
+import com.cibershield.cibershield.repository.order.OrderDetailRepository;
 import com.cibershield.cibershield.repository.product.ProductRepository;
 import com.cibershield.cibershield.repository.product.SubCategoryRepository;
 import com.cibershield.cibershield.repository.product.TradeMarkRepository;
@@ -30,6 +31,8 @@ public class ProductService {
     private TradeMarkRepository tradeMarkRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     public List<ProductDTO.Response> findAll() {
         return productRepository.findAll().stream()
@@ -58,7 +61,7 @@ public class ProductService {
         product.setProductName(dto.productName());
         product.setStock(dto.stock());
         product.setPrice(dto.price());
-        product.setUrl(imageUrl); 
+        product.setUrl(imageUrl);
         product.setSubCategory(subCategory);
         product.setTradeMark(tradeMark);
 
@@ -112,6 +115,9 @@ public class ProductService {
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id))
             throw new RuntimeException("Producto no encontrado");
+        if (orderDetailRepository.existsByProduct_Id(id)) {
+            throw new RuntimeException("No se puede eliminar el producto porque ya tiene ventas registradas.");
+        }
         productRepository.deleteById(id);
     }
 
