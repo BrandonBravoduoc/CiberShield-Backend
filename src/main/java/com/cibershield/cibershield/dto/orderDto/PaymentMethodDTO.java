@@ -1,11 +1,9 @@
 package com.cibershield.cibershield.dto.orderDto;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class PaymentMethodDTO {
 
         public record Create(
-                        @NotBlank(message = "El nombre del metodo de pago es obligatorio") String paymentName) {
+                        String paymentName) {
         }
 
         public record Response(

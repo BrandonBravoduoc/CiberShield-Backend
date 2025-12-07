@@ -61,13 +61,16 @@ public class OrderService {
 
         User user = getUserOrNaGrrr(userId); // posible propuesta (segun yo) pq vi q ya no estan usando auth
         Order order = createNewOrder(user);
-
-        BigDecimal total = processOrderItems(order, dto.items());
-
-        order.setTotal(total);
+        
+        // Guardar la Order primero para obtener su ID
         Order savedOrder = orderRepository.save(order);
 
-        return mapToResponseDTO(savedOrder);
+        BigDecimal total = processOrderItems(savedOrder, dto.items());
+
+        savedOrder.setTotal(total);
+        Order finalOrder = orderRepository.save(savedOrder);
+
+        return mapToResponseDTO(finalOrder);
     }
 
     public OrderDTO.OrderResponseDTO updateOrderStatus(Long orderId, OrderStatusDTO.Create dto) {
@@ -119,6 +122,7 @@ public class OrderService {
         order.setOrderNumber("ORD-" + String.format("%06d", orderRepository.count() + 1));
         order.setUser(user);
         order.setStatus(orderStatusService.getPendingStatus());
+        order.setTotal(BigDecimal.ZERO);
         order.setDetails(new ArrayList<>());
         return order;
     }
