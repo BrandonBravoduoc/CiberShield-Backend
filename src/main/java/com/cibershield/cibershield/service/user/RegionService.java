@@ -28,7 +28,7 @@ public class RegionService {
             .orElseThrow(()-> new RuntimeException("Region no encontrada."));
     }
     
-    public RegionDTO.Response createRegion(RegionDTO.Create dto){
+    public RegionDTO.Response createRegion(RegionDTO.CreateRegion dto){
         if(dto.regionName() == null || dto.regionName().trim().isEmpty()){
             throw new RuntimeException("Debe ingresar un nombre para la región.");
         }

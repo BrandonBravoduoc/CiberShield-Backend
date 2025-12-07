@@ -3,7 +3,7 @@ package com.cibershield.cibershield.dto.user;
 public class CommuneDTO {
 
    
-    public record Create(
+    public record CreateCommune(
         String nameCommunity,  
         Long regionId           
     ) {}

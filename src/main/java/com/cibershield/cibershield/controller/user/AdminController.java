@@ -86,7 +86,7 @@ public class AdminController {
    @PostMapping("/regions/{regionId}/communes")
     public ResponseEntity<?> createCommune(
             @PathVariable Long regionId,
-            @Valid @RequestBody CommuneDTO.Create dto) {
+            @Valid @RequestBody CommuneDTO.CreateCommune dto) {
 
         try{
             jwtUtil.checkAdmin();
@@ -104,7 +104,7 @@ public class AdminController {
     
 
     @PostMapping("/region")
-    public ResponseEntity<?> createRegion(@Valid @RequestBody RegionDTO.Create dto) {
+    public ResponseEntity<?> createRegion(@Valid @RequestBody RegionDTO.CreateRegion dto) {
 
         try{
             jwtUtil.checkAdmin();

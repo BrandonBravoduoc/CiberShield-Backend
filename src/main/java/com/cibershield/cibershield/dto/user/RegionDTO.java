@@ -3,7 +3,7 @@ package com.cibershield.cibershield.dto.user;
 
 public class RegionDTO {
 
-    public record Create(
+    public record CreateRegion(
         String regionName
     ) {}
 

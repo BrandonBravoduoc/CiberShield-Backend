@@ -24,7 +24,7 @@ public class CommuneService {
     private RegionRepository regionRepository;
 
 
-    public CommuneDTO.Response createCommune(CommuneDTO.Create dto, Long regionId){
+    public CommuneDTO.Response createCommune(CommuneDTO.CreateCommune dto, Long regionId){
         if(dto.nameCommunity() == null || dto.nameCommunity().trim().isBlank()){
             throw new RuntimeException("Debe ingresar el nombre de la comuna");
         }
