@@ -154,7 +154,6 @@ public class OrderService {
                 order.getOrderDate(),
                 order.getTotal(),
                 order.getStatus().getName(),
-                order.getUser().getUserName(),
                 mapOrderDetails(order.getDetails()));
     }
 
