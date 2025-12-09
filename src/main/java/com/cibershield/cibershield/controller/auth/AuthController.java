@@ -78,9 +78,16 @@ public class AuthController {
         try {
             String email = userService.emailValidate(dto.email());
 
+            if(dto.email() == null || dto.email().isEmpty()){
+                throw new RuntimeException("El correo no puede estar vacío.");
+            }
+            
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
 
+            if(dto.password() == null || dto.password().isEmpty()){
+                throw new RuntimeException("La contraseña no puede estar vacía.");
+            }
             if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
                 throw new RuntimeException("La contraseña es incorrecta.");
             }
