@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cibershield.cibershield.dto.user.ContactDTO;
 import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.Profile;
-import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
 import com.cibershield.cibershield.model.user.User;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.service.user.ContactService;

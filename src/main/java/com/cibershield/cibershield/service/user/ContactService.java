@@ -39,6 +39,9 @@ public class ContactService {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
+        if(dto.phone() == null){
+           throw new RuntimeException("El teléfono es obligatorio.");
+        }
         contactValidate(dto.name(), dto.lastName(), dto.phone());
             
         Address address = addressService.createAndSaveAddress(
@@ -121,23 +124,33 @@ public class ContactService {
     }
 
     public void contactValidate(String name, String lastName, String phone){
-        if(name == null || name.trim().isBlank()){
-            throw new RuntimeException("El nombre es obligatorio.");
+
+        if(name != null && name.trim().length() > 0) {
+            if(name.trim().isBlank()){
+                throw new RuntimeException("El nombre es obligatorio.");
+            }
         }
-        if(lastName == null || lastName.trim().isBlank()){
-            throw new RuntimeException("El apellido es obligatorio.");
+        if(lastName != null && lastName.trim().length() > 0) {
+            if(lastName.trim().isBlank()){
+                throw new RuntimeException("El apellido es obligatorio.");
+            }
         }
-        if(phone == null || phone.trim().isBlank()){
-            throw new RuntimeException("Debe ingresar un número de teléfono.");
-        }
-        if(contactRepository.existsByPhone(phone)){
-            throw new RuntimeException("El número de teléfono ya está en uso.");
-        }
-        if(!phone.matches("\\d+")){
-            throw new RuntimeException("El teléfono solo puede contener números.");
-        }
-        if(phone.length() != 9){
-            throw new RuntimeException("Debe ingresar solo 9 dígitos.");
+        if(phone != null && !phone.trim().isBlank()) {
+
+            if(contactRepository.existsByPhone(phone)){
+                throw new RuntimeException("El número de teléfono ya está en uso.");
+            }
+            if(!phone.matches("\\d+")){
+                throw new RuntimeException("El teléfono solo puede contener números.");
+            }
+            if(phone.length() != 9){
+                throw new RuntimeException("Debe ingresar solo 9 dígitos.");
+            }
         }
     }
+
+
+
+
+
 }
