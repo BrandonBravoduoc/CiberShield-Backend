@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cibershield.cibershield.dto.user.ContactDTO;
 import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
 import com.cibershield.cibershield.model.user.Address;
@@ -221,26 +222,35 @@ public class UserService {
         Contact contact = contactRepository.findByUser(currentUser)
             .orElse(null);
 
-        String addressInfo = null;
-        if (contact != null && contact.getAddress() != null) {
-            Address addr = contact.getAddress();
-            addressInfo = addr.getStreet() + " " + addr.getNumber() +
-                        ", " + addr.getCommune().getNameCommunity();
-        }
-        else{
-            if(contact == null){
-                addressInfo = "Sin información";
+        ContactDTO.Response contactDTO = null;
+
+        if (contact != null) {
+
+            String addressInfo = null;
+
+            if (contact.getAddress() != null) {
+                Address addr = contact.getAddress();
+                addressInfo = addr.getStreet() + " " + addr.getNumber() + 
+                            ", " + addr.getCommune().getNameCommunity();
             }
+
+            contactDTO = new ContactDTO.Response(
+                contact.getId(),
+                contact.getName(),
+                contact.getLastName(),
+                contact.getPhone(),
+                addressInfo,
+                currentUser.getUserName()
+            );
         }
 
         return new UserDTO.Profile(
             currentUser.getUserName(),
             currentUser.getEmail(),
-            contact != null ? contact.getName() : "Iompleta tu nombre",
-            contact != null ? contact.getLastName() : "Ingresa tu apellido",
-            contact != null ? contact.getPhone() : "Ingresa tu teléfono",
-            addressInfo,
-            currentUser.getImageUser()
+            currentUser.getImageUser(),
+            contactDTO
         );
     }
+
 }
+

@@ -52,14 +52,12 @@ public class UserDTO {
 
 
     public record Profile(
-        String userName,
-        String email,
-        String name,
-        String lastName,
-        String phone,
-        String adressInfo,
-        String imageUser
+    String userName,
+    String email,
+    String imageUser,
+    ContactDTO.Response contact
     ){}
+
 
 
 }
