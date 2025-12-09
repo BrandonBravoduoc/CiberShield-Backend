@@ -104,25 +104,6 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/me/change-password")
-    public ResponseEntity<?> changeMyPassword(@Valid @RequestBody UserDTO.ChangePassword dto) {
-        try {
-            Long userId = jwtUtil.getCurrentUserId();
-            userService.changeMyPassword(dto, userId);
-            return ResponseEntity.ok(
-                Map.of("message", "Contraseña actualizada exitosamente.")
-            );
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", ex.getMessage()));
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                        "error", "Error interno del servidor",
-                        "detalle", ex.getMessage()
-                    ));
-        }
-    }
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateContact(@RequestBody ContactDTO.UpdateContactWithAddress dto) {
