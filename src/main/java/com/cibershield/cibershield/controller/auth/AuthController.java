@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +21,7 @@ import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.service.user.UserService;
 import com.cibershield.cibershield.service.util.CloudinaryService;
 import com.cibershield.cibershield.service.util.JwtService;
-import com.cibershield.cibershield.util.JwtUtil;
+
 
 import jakarta.validation.Valid;
 
@@ -46,8 +45,6 @@ public class AuthController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -84,7 +81,7 @@ public class AuthController {
             if(dto.email() == null || dto.email().isEmpty()){
                 throw new RuntimeException("El correo no puede estar vacío.");
             }
-
+            
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("El correo ingresado no existe."));
 
@@ -116,25 +113,5 @@ public class AuthController {
         }
     }
 
-
-    @PatchMapping("/me/change-password")
-    public ResponseEntity<?> changeMyPassword(@Valid @RequestBody UserDTO.ChangePassword dto) {
-        try {
-            Long userId = jwtUtil.getCurrentUserId();
-            userService.changeMyPassword(dto, userId);
-            return ResponseEntity.ok(
-                Map.of("message", "Contraseña actualizada exitosamente.")
-            );
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", ex.getMessage()));
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                        "error", "Error interno del servidor",
-                        "detalle", ex.getMessage()
-                    ));
-        }
-    }
 
 }
