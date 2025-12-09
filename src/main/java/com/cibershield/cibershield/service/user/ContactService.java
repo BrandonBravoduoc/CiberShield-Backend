@@ -79,14 +79,22 @@ public class ContactService {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        contactValidate(dto.name(), dto.lastName(), dto.phone());
-        addressService.addressValidation(dto.street(), dto.number());
-
         Contact contact = contactRepository.findById(dto.id())
                 .orElseThrow(() -> new RuntimeException("Contacto no encontrado"));
 
         if (!contact.getUser().getId().equals(currentUser.getId())) {
             throw new RuntimeException("No tienes permiso para actualizar este contacto");
+        }
+
+        contactValidate(dto.name(), dto.lastName(), dto.phone());
+        addressService.addressValidation(dto.street(), dto.number());
+
+        if (dto.phone() != null && !dto.phone().isBlank()) {
+            Contact existing = contactRepository.findByPhone(dto.phone()).orElse(null);
+
+            if (existing != null && !existing.getId().equals(contact.getId())) {
+                throw new RuntimeException("El número de teléfono ya está en uso.");
+            }
         }
 
         Commune commune = communeRepository.findById(dto.communeId())
@@ -105,7 +113,6 @@ public class ContactService {
         contact.setName(dto.name().trim());
         contact.setLastName(dto.lastName().trim());
         contact.setPhone(dto.phone().trim());
-        contact.setUser(currentUser);
         contact.setAddress(address);
 
         contactRepository.save(contact);
@@ -122,6 +129,7 @@ public class ContactService {
                 currentUser.getUserName()
         );
     }
+
 
     public void contactValidate(String name, String lastName, String phone){
 

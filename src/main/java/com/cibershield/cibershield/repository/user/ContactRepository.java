@@ -16,6 +16,8 @@ public interface ContactRepository extends JpaRepository <Contact , Long>{
 
     Optional<Contact> findByUser(User currentUser);
 
+    Optional<Contact> findByPhone(String phone);
+
     
 
     
