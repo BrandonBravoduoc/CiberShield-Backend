@@ -58,11 +58,11 @@ public class AuthController {
             }
 
             UserDTO.Register serviceDto = new UserDTO.Register(
-                dto.userName(),
-                imageUrl,                     
-                dto.email(),
-                dto.password(),
-                dto.confirmPassword()
+                dto.userName(),       
+                dto.email(),        
+                dto.password(),       
+                dto.confirmPassword(), 
+                imageUrl              
             );
 
             UserDTO.Response response = userService.createUser(serviceDto);
