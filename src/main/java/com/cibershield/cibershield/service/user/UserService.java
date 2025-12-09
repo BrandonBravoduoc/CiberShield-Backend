@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cibershield.cibershield.dto.user.UserDTO;
 import com.cibershield.cibershield.dto.user.UserDTO.UpdateUser;
@@ -15,6 +16,7 @@ import com.cibershield.cibershield.model.user.UserRole;
 import com.cibershield.cibershield.repository.user.ContactRepository;
 import com.cibershield.cibershield.repository.user.UserRepository;
 import com.cibershield.cibershield.repository.user.UserRoleRepository;
+import com.cibershield.cibershield.service.util.CloudinaryService;
 
 import jakarta.transaction.Transactional;
 
@@ -34,6 +36,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public UserDTO.Response createUser(UserDTO.Register dto){
         
@@ -106,39 +111,49 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO.Response userUpdate(UpdateUser dto, Long userId) {
-
+    public UserDTO.Response userUpdate(UpdateUser dto, MultipartFile imageUser, Long userId) {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (dto.newUserName() != null && !dto.newUserName().isBlank()) {
-            if (userRepository.existsByUserName(dto.newUserName().trim())) {
-                throw new RuntimeException("El nombre de usuario no está disponible.");
-            }
-            currentUser.setUserName(dto.newUserName().trim());
-        }
+        if (dto != null && dto.newUserName() != null && !dto.newUserName().isBlank()) {
 
-        if (dto.newEmail() != null && !dto.newEmail().isBlank()) {
-            userRepository.findByEmail(dto.newEmail()).ifPresent(existingUser -> {
+            String cleanName = dto.newUserName().trim();
+
+            if (!cleanName.equalsIgnoreCase(currentUser.getUserName())) {
+                if (userRepository.existsByUserName(cleanName)) {
+                    throw new RuntimeException("El nombre de usuario no está disponible.");
+                }
+            }
+
+            currentUser.setUserName(cleanName);
+        }
+        if (dto != null && dto.newEmail() != null && !dto.newEmail().isBlank()) {
+
+            String cleanEmail = dto.newEmail().trim().toLowerCase();
+
+            userRepository.findByEmail(cleanEmail).ifPresent(existingUser -> {
                 if (!existingUser.getId().equals(currentUser.getId())) {
                     throw new RuntimeException("El correo ya está en uso.");
                 }
             });
-
-            emailValidate(dto.newEmail());
-            currentUser.setEmail(dto.newEmail().trim().toLowerCase());
+            emailValidate(cleanEmail);
+            currentUser.setEmail(cleanEmail);
         }
-
-        User updateUser = userRepository.save(currentUser);
+        if (imageUser != null && !imageUser.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadUserImage(imageUser);
+            currentUser.setImageUser(imageUrl);
+        }
+        User updatedUser = userRepository.save(currentUser);
 
         return new UserDTO.Response(
-                updateUser.getId(),
-                updateUser.getUserName(),
-                updateUser.getEmail(),
-                updateUser.getImageUser(),
-                updateUser.getUserRole().getNameRole()
+                updatedUser.getId(),
+                updatedUser.getUserName(),
+                updatedUser.getEmail(),
+                updatedUser.getImageUser(),
+                updatedUser.getUserRole().getNameRole()
         );
     }
+
 
     public void changeMyPassword(UserDTO.ChangePassword dto, Long userId) {
 

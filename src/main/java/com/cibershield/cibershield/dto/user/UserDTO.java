@@ -56,7 +56,7 @@ public class UserDTO {
         String email,
         String name,
         String lastName,
-        String Phone,
+        String phone,
         String adressInfo,
         String imageUser
     ){}

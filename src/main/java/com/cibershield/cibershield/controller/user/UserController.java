@@ -2,7 +2,9 @@ package com.cibershield.cibershield.controller.user;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cibershield.cibershield.dto.user.ContactDTO;
 import com.cibershield.cibershield.dto.user.UserDTO;
@@ -86,23 +88,27 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/me")
-    public ResponseEntity<?> updateCurrentUser(@RequestBody UpdateUser dto) {
+    @PatchMapping(value = "/me", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> updateCurrentUser(
+            @RequestPart(required = false) MultipartFile imageUser,
+            @RequestPart(required = false) UserDTO.UpdateUser dto
+    ) {
         try {
             Long userId = jwtUtil.getCurrentUserId();
-            UserDTO.Response updated = userService.userUpdate(dto, userId);
+
+            UserDTO.Response updated = userService.userUpdate(dto, imageUser, userId);
+
             return ResponseEntity.ok(updated);
+
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", ex.getMessage()));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                        "error", "Error interno del servidor",
-                        "detalle", ex.getMessage()
-                    ));
+                    .body(Map.of("error", "Error interno del servidor"));
         }
     }
+
 
     @PatchMapping("/me/change-password")
     public ResponseEntity<?> changeMyPassword(@Valid @RequestBody UserDTO.ChangePassword dto) {
