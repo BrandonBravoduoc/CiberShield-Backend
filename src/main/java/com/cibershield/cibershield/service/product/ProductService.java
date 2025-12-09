@@ -61,7 +61,7 @@ public class ProductService {
         product.setProductName(dto.productName());
         product.setStock(dto.stock());
         product.setPrice(dto.price());
-        product.setUrl(imageUrl);
+        product.setImageUrl(imageUrl);
         product.setSubCategory(subCategory);
         product.setTradeMark(tradeMark);
 
@@ -93,7 +93,7 @@ public class ProductService {
 
         String newUrl = cloudinaryService.uploadProductImage(imageFile);
         if (newUrl != null) {
-            product.setUrl(newUrl);
+            product.setImageUrl(newUrl);
         }
 
         product = productRepository.save(product);
@@ -127,7 +127,7 @@ public class ProductService {
                 p.getProductName(),
                 p.getStock(),
                 p.getPrice(),
-                p.getUrl(),
+                p.getImageUrl(),
                 p.getSubCategory() != null ? p.getSubCategory().getSubCategoryName() : "Sin Categoría",
                 p.getSubCategory() != null && p.getSubCategory().getCategory() != null
                         ? p.getSubCategory().getCategory().getCategoryName()

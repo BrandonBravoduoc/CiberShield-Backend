@@ -35,7 +35,7 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "image_url")
-    private String url;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "id_sub_category", nullable = true)
