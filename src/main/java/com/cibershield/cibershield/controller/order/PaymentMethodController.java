@@ -25,7 +25,6 @@ public class PaymentMethodController {
     @GetMapping
     public ResponseEntity<List<?>> list() {
         try {
-            jwtUtil.checkAdmin();
             return ResponseEntity.ok(paymentMethodService.searchAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -25,7 +25,6 @@ public class ShippingMethodController {
     @GetMapping
     public ResponseEntity<List<ShippingMethodDTO.Response>> list() {
         try {
-            jwtUtil.checkAdmin();
             return ResponseEntity.ok(shippingMethodService.searchAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
