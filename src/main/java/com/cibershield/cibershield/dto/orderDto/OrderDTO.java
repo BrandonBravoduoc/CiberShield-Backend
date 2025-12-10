@@ -3,12 +3,18 @@ package com.cibershield.cibershield.dto.orderDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class OrderDTO {
 
-        public record OrderCreate(
-                        List<OrderDTO.CreateItem> items) {
-        }
+       public record OrderCreateDTO(
+                Long paymentMethodId,
+                Long shippingMethodId,
+                BigDecimal total,
+                Map<String, String> cardInfo,
+                List<OrderDTO.CreateItem> items
+        ) {}
+
 
         public record CreateItem(
                         Long productId,

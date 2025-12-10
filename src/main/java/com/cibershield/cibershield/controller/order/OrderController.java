@@ -1,6 +1,6 @@
 package com.cibershield.cibershield.controller.order;
 
-import com.cibershield.cibershield.dto.orderDto.OrderDTO;
+import com.cibershield.cibershield.dto.orderDto.OrderDTO.OrderCreateDTO;
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
 import com.cibershield.cibershield.model.order.Order;
 import com.cibershield.cibershield.service.order.OrderService;
@@ -42,7 +42,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody OrderDTO.OrderCreate dto) {
+    public ResponseEntity<?> create(@RequestBody OrderCreateDTO dto) {
         try {
             Long userId = 1L;
             return new ResponseEntity<>(orderService.create(dto, userId), HttpStatus.CREATED);

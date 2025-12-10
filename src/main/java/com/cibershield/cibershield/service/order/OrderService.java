@@ -1,6 +1,7 @@
 package com.cibershield.cibershield.service.order;
 
 import com.cibershield.cibershield.dto.orderDto.OrderDTO;
+import com.cibershield.cibershield.dto.orderDto.OrderDTO.OrderCreateDTO;
 import com.cibershield.cibershield.dto.orderDto.OrderStatusDTO;
 import com.cibershield.cibershield.model.order.Order;
 import com.cibershield.cibershield.model.order.OrderDetail;
@@ -56,13 +57,12 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public OrderDTO.OrderResponseDTO create(OrderDTO.OrderCreate dto, Long userId) {
+    public OrderDTO.OrderResponseDTO create(OrderCreateDTO dto, Long userId) {
         validateCreateOrder(dto);
 
-        User user = getUserOrNaGrrr(userId); // posible propuesta (segun yo) pq vi q ya no estan usando auth
+        User user = getUserOrNaGrrr(userId); 
         Order order = createNewOrder(user);
         
-        // Guardar la Order primero para obtener su ID
         Order savedOrder = orderRepository.save(order);
 
         BigDecimal total = processOrderItems(savedOrder, dto.items());
@@ -85,7 +85,7 @@ public class OrderService {
         return mapToResponseDTO(updatedOrder);
     }
 
-    private void validateCreateOrder(OrderDTO.OrderCreate dto) {
+    private void validateCreateOrder(OrderCreateDTO dto) {
         if (dto == null || dto.items() == null || dto.items().isEmpty()) {
             throw new RuntimeException("Tu carrito está vacio.");
         }
