@@ -44,7 +44,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody OrderCreateDTO dto) {
         try {
-            Long userId = 1L;
+            Long userId = jwtUtil.getCurrentUserId();
             return new ResponseEntity<>(orderService.create(dto, userId), HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
