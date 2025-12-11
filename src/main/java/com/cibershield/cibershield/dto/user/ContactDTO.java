@@ -29,8 +29,9 @@ public class ContactDTO {
         String lastName,
         String phone,
         String addressInfo,
-        String userName
-     
+        String userName,
+        String regionName,
+        String communeName
     ) {}
 
     
