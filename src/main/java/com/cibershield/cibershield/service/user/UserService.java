@@ -227,18 +227,11 @@ public class UserService {
         if (contact != null) {
 
             String addressInfo = null;
-            String regionName = null;
-            String communeName = null;
 
             if (contact.getAddress() != null) {
                 Address addr = contact.getAddress();
                 addressInfo = addr.getStreet() + " " + addr.getNumber() + 
                             ", " + addr.getCommune().getNameCommunity();
-                communeName = addr.getCommune().getNameCommunity();
-                
-                if (addr.getCommune().getRegion() != null) {
-                    regionName = addr.getCommune().getRegion().getRegionName();
-                }
             }
 
             contactDTO = new ContactDTO.Response(
@@ -247,9 +240,7 @@ public class UserService {
                 contact.getLastName(),
                 contact.getPhone(),
                 addressInfo,
-                currentUser.getUserName(),
-                regionName,
-                communeName
+                currentUser.getUserName()
             );
         }
 
