@@ -22,7 +22,7 @@ public class DataInitializer {
         return args -> {
 
             // ------------------------------
-            // Crear Roles por defecto
+            // defecto :)
             // ------------------------------
             UserRole adminRole = roleRepository.findByNameRole("ADMINISTRADOR")
                     .orElseGet(() -> {
@@ -41,7 +41,7 @@ public class DataInitializer {
             System.out.println("Roles creados/verificados.");
 
             // ------------------------------
-            // Crear usuario administrador
+            // administrador :D
             // ------------------------------
             String adminEmail = "admin@cibershield.com";
 
@@ -50,7 +50,7 @@ public class DataInitializer {
                 User admin = new User();
                 admin.setUserName("Administrador");
                 admin.setEmail(adminEmail);
-                admin.setPassword(passwordEncoder.encode("Admin123$")); // ← contraseña segura
+                admin.setPassword(passwordEncoder.encode("Admin123$")); 
                 admin.setUserRole(adminRole);
                 admin.setImageUser("https://res.cloudinary.com/dyf3i5iqa/image/upload/cibershield/default-avatar.png");
 
