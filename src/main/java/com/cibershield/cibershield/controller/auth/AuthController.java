@@ -51,7 +51,7 @@ public class AuthController {
     public ResponseEntity<?> register(@ModelAttribute RegisterRequest dto) {
         try {
 
-            String imageUrl = "https://res.cloudinary.com/dyf3i5iqa/image/upload/cibershield/default-avatar.png";
+            String imageUrl = "https://res.cloudinary.com/dyf3i5iqa/image/upload/v1765915504/plantilla-diseno-icono-persona-ilustracion-vectorial-signo-avatar-aislado_109161-3505_p2ny0n.avif";
 
             if (dto.imageUser() != null && !dto.imageUser().isEmpty()) {
                 imageUrl = cloudinaryService.uploadUserImage(dto.imageUser());
