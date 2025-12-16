@@ -31,12 +31,12 @@ public class OrderDTO {
         }
 
         public record OrderResponseDTO(
-                        Long id,
-                        String orderNumber,
-                        LocalDate orderDate,
-                        BigDecimal total,
-                        String status,
-                        List<OrderDTO.OrderDetailResponse> details) {
-        }
+                Long id,
+                String orderNumber,
+                LocalDate orderDate,
+                BigDecimal total,
+                OrderStatusDTO.Response status, 
+                List<OrderDTO.OrderDetailResponse> details
+        ) {}
 
 }

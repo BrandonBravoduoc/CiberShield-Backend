@@ -148,14 +148,22 @@ public class OrderService {
     }
 
     private OrderDTO.OrderResponseDTO mapToResponseDTO(Order order) {
+        OrderStatusDTO.Response statusDto = new OrderStatusDTO.Response(
+            order.getStatus().getId(),
+            order.getStatus().getName(),
+            order.getStatus().getDescription()
+        );
+
         return new OrderDTO.OrderResponseDTO(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getOrderDate(),
                 order.getTotal(),
-                order.getStatus().getName(),
-                mapOrderDetails(order.getDetails()));
+                statusDto, 
+                mapOrderDetails(order.getDetails())
+        );
     }
+
 
     private List<OrderDTO.OrderDetailResponse> mapOrderDetails(List<OrderDetail> details) {
         return details.stream()
