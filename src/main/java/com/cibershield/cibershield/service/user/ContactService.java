@@ -34,20 +34,24 @@ public class ContactService {
     @Autowired
     private UserRepository userRepository;
 
-    public ContactDTO.Response contactCreateWithAddress(ContactDTO.CreateContactWithAddress dto, Long userId) {
+   public ContactDTO.Response contactCreateWithAddress(
+        ContactDTO.CreateContactWithAddress dto,
+        Long userId
+    ) {
 
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
-        if(dto.phone() == null){
-           throw new RuntimeException("El teléfono es obligatorio.");
-        }
         contactValidate(dto.name(), dto.lastName(), dto.phone());
-            
+
+        if (contactRepository.existsByPhone(dto.phone())) {
+            throw new RuntimeException("El número de teléfono ya está en uso.");
+        }
+
         Address address = addressService.createAndSaveAddress(
-            dto.street(),
-            dto.number(),
-            dto.communeId()
+                dto.street(),
+                dto.number(),
+                dto.communeId()
         );
 
         Contact contact = new Contact();
@@ -56,25 +60,31 @@ public class ContactService {
         contact.setPhone(dto.phone().trim());
         contact.setUser(currentUser);
         contact.setAddress(address);
+
         contact = contactRepository.save(contact);
 
         String addressInfo = contact.getAddress() != null
-            ? contact.getAddress().getStreet() + " " + contact.getAddress().getNumber() +
-            ", " + contact.getAddress().getCommune().getNameCommunity()
-            : null;
+                ? contact.getAddress().getStreet() + " " +
+                contact.getAddress().getNumber() + ", " +
+                contact.getAddress().getCommune().getNameCommunity()
+                : null;
 
         return new ContactDTO.Response(
-            contact.getId(),
-            contact.getName(),
-            contact.getLastName(),
-            contact.getPhone(),
-            addressInfo,
-            currentUser.getUserName()
+                contact.getId(),
+                contact.getName(),
+                contact.getLastName(),
+                contact.getPhone(),
+                addressInfo,
+                currentUser.getUserName()
         );
     }
 
 
-    public ContactDTO.Response updateContactWithAddress(ContactDTO.UpdateContactWithAddress dto, Long userId) {
+
+    public ContactDTO.Response updateContactWithAddress(
+            ContactDTO.UpdateContactWithAddress dto,
+            Long userId
+    ) {
 
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -90,7 +100,9 @@ public class ContactService {
         addressService.addressValidation(dto.street(), dto.number());
 
         if (dto.phone() != null && !dto.phone().isBlank()) {
-            Contact existing = contactRepository.findByPhone(dto.phone()).orElse(null);
+            Contact existing = contactRepository
+                    .findByPhone(dto.phone())
+                    .orElse(null);
 
             if (existing != null && !existing.getId().equals(contact.getId())) {
                 throw new RuntimeException("El número de teléfono ya está en uso.");
@@ -105,8 +117,8 @@ public class ContactService {
             address = new Address();
         }
 
-        address.setStreet(dto.street());
-        address.setNumber(dto.number());
+        address.setStreet(dto.street().trim());
+        address.setNumber(dto.number().trim());
         address.setCommune(commune);
         addressRepository.save(address);
 
@@ -117,8 +129,9 @@ public class ContactService {
 
         contactRepository.save(contact);
 
-        String addressInfo = address.getStreet() + " " + address.getNumber() +
-                ", " + address.getCommune().getNameCommunity();
+        String addressInfo = address.getStreet() + " " +
+                address.getNumber() + ", " +
+                address.getCommune().getNameCommunity();
 
         return new ContactDTO.Response(
                 contact.getId(),
@@ -131,31 +144,29 @@ public class ContactService {
     }
 
 
-    public void contactValidate(String name, String lastName, String phone){
 
-        if(name != null && name.trim().length() > 0) {
-            if(name.trim().isBlank()){
-                throw new RuntimeException("El nombre es obligatorio.");
-            }
+   public void contactValidate(String name, String lastName, String phone){
+        if(name == null || name.trim().isBlank()){
+            throw new RuntimeException("El nombre es obligatorio.");
         }
-        if(lastName != null && lastName.trim().length() > 0) {
-            if(lastName.trim().isBlank()){
-                throw new RuntimeException("El apellido es obligatorio.");
-            }
-        }
-        if(phone != null && !phone.trim().isBlank()) {
 
-            if(contactRepository.existsByPhone(phone)){
-                throw new RuntimeException("El número de teléfono ya está en uso.");
-            }
-            if(!phone.matches("\\d+")){
-                throw new RuntimeException("El teléfono solo puede contener números.");
-            }
-            if(phone.length() != 9){
-                throw new RuntimeException("Debe ingresar solo 9 dígitos.");
-            }
+        if(lastName == null || lastName.trim().isBlank()){
+            throw new RuntimeException("El apellido es obligatorio.");
+        }
+
+        if(phone == null || phone.trim().isBlank()){
+            throw new RuntimeException("El teléfono es obligatorio.");
+        }
+
+        if(!phone.matches("\\d+")){
+            throw new RuntimeException("El teléfono solo puede contener números.");
+        }
+
+        if(phone.length() != 9){
+            throw new RuntimeException("Debe ingresar solo 9 dígitos.");
         }
     }
+
 
 
 
